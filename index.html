@@ -170,6 +170,110 @@ input[type="text"]::placeholder{color:var(--text-3);}
 .card-scene{width:115px;height:162px;perspective:600px;}
 .card-flipper{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(.4,0,.2,1);}
 .card-flipper.flipped{transform:rotateY(180deg);}
+
+/* 카드별 고유 플립 애니메이션 */
+/* A: 위에서 아래로 낙하 + 회전 */
+.card-flipper.flip-A { animation: flip-A 0.7s cubic-bezier(.34,1.4,.64,1) forwards; }
+@keyframes flip-A {
+  0%   { transform: rotateY(0) translateY(-60px) scale(0.7); opacity:0; }
+  60%  { transform: rotateY(200deg) translateY(8px) scale(1.08); }
+  100% { transform: rotateY(180deg) translateY(0) scale(1); opacity:1; }
+}
+/* 2: 빠르게 수평 플립 */
+.card-flipper.flip-2 { animation: flip-2 0.35s ease-in-out forwards; }
+@keyframes flip-2 {
+  0%   { transform: rotateY(0); }
+  100% { transform: rotateY(180deg); }
+}
+/* 3: 빠르게 수평 플립 */
+.card-flipper.flip-3 { animation: flip-3 0.35s ease-in-out forwards; }
+@keyframes flip-3 {
+  0%   { transform: rotateY(0); }
+  100% { transform: rotateY(180deg); }
+}
+/* 4: 왼쪽으로 슬라이드 플립 */
+.card-flipper.flip-4 { animation: flip-4 0.55s cubic-bezier(.25,.46,.45,.94) forwards; }
+@keyframes flip-4 {
+  0%   { transform: rotateY(0) translateX(40px); opacity:0.5; }
+  100% { transform: rotateY(180deg) translateX(0); opacity:1; }
+}
+/* 5: 오른쪽으로 슬라이드 플립 */
+.card-flipper.flip-5 { animation: flip-5 0.55s cubic-bezier(.25,.46,.45,.94) forwards; }
+@keyframes flip-5 {
+  0%   { transform: rotateY(0) translateX(-40px); opacity:0.5; }
+  100% { transform: rotateY(180deg) translateX(0); opacity:1; }
+}
+/* 6: 세로 플립 (X축) */
+.card-flipper.flip-6 { animation: flip-6 0.6s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes flip-6 {
+  0%   { transform: rotateX(0); }
+  100% { transform: rotateX(180deg); }
+}
+/* 7: 위로 튀어오르며 플립 */
+.card-flipper.flip-7 { animation: flip-7 0.65s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes flip-7 {
+  0%   { transform: rotateY(0) translateY(0); }
+  40%  { transform: rotateY(90deg) translateY(-30px); }
+  100% { transform: rotateY(180deg) translateY(0); }
+}
+/* 8: 천천히 우아하게 */
+.card-flipper.flip-8 { animation: flip-8 1.0s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes flip-8 {
+  0%   { transform: rotateY(0) scale(1); }
+  50%  { transform: rotateY(90deg) scale(1.1); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+/* 9: 흔들흔들 플립 */
+.card-flipper.flip-9 { animation: flip-9 0.7s ease forwards; }
+@keyframes flip-9 {
+  0%   { transform: rotateY(0) rotate(0deg); }
+  25%  { transform: rotateY(45deg) rotate(-5deg); }
+  75%  { transform: rotateY(135deg) rotate(5deg); }
+  100% { transform: rotateY(180deg) rotate(0deg); }
+}
+/* 10: 줌인 플립 */
+.card-flipper.flip-10 { animation: flip-10 0.6s cubic-bezier(.34,1.3,.64,1) forwards; }
+@keyframes flip-10 {
+  0%   { transform: rotateY(0) scale(0.5); opacity:0; }
+  60%  { transform: rotateY(200deg) scale(1.15); }
+  100% { transform: rotateY(180deg) scale(1); opacity:1; }
+}
+/* J: 대각선 회전 플립 */
+.card-flipper.flip-J { animation: flip-J 0.7s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes flip-J {
+  0%   { transform: rotateY(0) rotate(0deg); }
+  50%  { transform: rotateY(90deg) rotate(15deg) scale(1.1); }
+  100% { transform: rotateY(180deg) rotate(0deg) scale(1); }
+}
+/* Q: 우아한 나비 펼치기 */
+.card-flipper.flip-Q { animation: flip-Q 0.9s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes flip-Q {
+  0%   { transform: rotateY(0) scale(0.8); opacity:0.5; }
+  30%  { transform: rotateY(60deg) scale(1.05) translateY(-10px); }
+  70%  { transform: rotateY(140deg) scale(1.05) translateY(-10px); }
+  100% { transform: rotateY(180deg) scale(1) translateY(0); opacity:1; }
+}
+/* K: 강렬한 충격파 효과 */
+.card-flipper.flip-K { animation: flip-K 0.8s cubic-bezier(.34,1.6,.64,1) forwards; }
+@keyframes flip-K {
+  0%   { transform: rotateY(0) scale(1.3); opacity:0; }
+  30%  { transform: rotateY(100deg) scale(0.9); opacity:1; }
+  65%  { transform: rotateY(200deg) scale(1.15); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+/* K 뽑았을 때 화면 전체 진동 */
+@keyframes screen-shake {
+  0%,100% { transform: translateX(0); }
+  15%  { transform: translateX(-8px) rotate(-1deg); }
+  30%  { transform: translateX(8px) rotate(1deg); }
+  45%  { transform: translateX(-6px); }
+  60%  { transform: translateX(6px); }
+  75%  { transform: translateX(-3px); }
+  90%  { transform: translateX(3px); }
+}
+.shake { animation: screen-shake 0.5s ease; }
+
 .card-face,.card-back-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;}
 .card-back-face{
   background:linear-gradient(145deg,#150d30,#0e0a20,#1c1440);
@@ -537,7 +641,11 @@ function updateGame(room){
     document.getElementById('card-suit-txt').textContent=last.s;
     // 다른 사람이 뽑은 경우 플립 (내가 뽑을 땐 drawCard에서 처리)
     const flipper=document.getElementById('card-flipper');
-    if(!flipper.classList.contains('flipped')) flipper.classList.add('flipped');
+    if(!flipper.classList.contains(`flip-${last.r}`)){
+      flipper.className='card-flipper';
+      void flipper.offsetWidth;
+      flipper.classList.add(`flip-${last.r}`);
+    }
     document.getElementById('card-by').innerHTML=`<strong>${last.by}</strong>님이 뽑음`;
     const rule=rules[last.r]||DR[last.r]||'';
     document.getElementById('rule-col').innerHTML=`
@@ -574,7 +682,8 @@ async function drawCard(){
   document.getElementById('btn-draw').disabled=true;
   // 먼저 뒷면으로 리셋
   const flipper=document.getElementById('card-flipper');
-  flipper.classList.remove('flipped');
+  flipper.className='card-flipper';
+  void flipper.offsetWidth;
   try{
     const snap=await get(rRef(G.roomCode));if(!snap.exists())return;
     const room=snap.val();
@@ -593,9 +702,21 @@ async function drawCard(){
     document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
     document.getElementById('card-suit-txt').textContent=card.s;
 
-    // 잠깐 후 플립 (뒷면 보였다가 앞면으로)
+    // 카드별 고유 플립 애니메이션 적용
     await new Promise(r=>setTimeout(r,150));
-    flipper.classList.add('flipped');
+    const flipper=document.getElementById('card-flipper');
+    // 기존 flip 클래스 모두 제거
+    flipper.className='card-flipper';
+    void flipper.offsetWidth; // reflow 강제
+    flipper.classList.add(`flip-${card.r}`);
+
+    // K 뽑으면 화면 진동
+    if(card.r==='K'){
+      document.getElementById('app').classList.remove('shake');
+      void document.getElementById('app').offsetWidth;
+      document.getElementById('app').classList.add('shake');
+      setTimeout(()=>document.getElementById('app').classList.remove('shake'), 500);
+    }
 
     const newDrawn=[...drawn,{r:card.r,s:card.s,by:G.myName,t:Date.now()}];
     let kingsDrawn=room.kingsDrawn||0,gameOver=false,kingOv=false;
@@ -622,7 +743,8 @@ async function startNewGame(){
     const deck=makeDeck();
     await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
     G.gameOverShown=false;
-    document.getElementById('card-flipper').classList.remove('flipped');
+    const flipper=document.getElementById('card-flipper');
+    flipper.className='card-flipper';
     document.getElementById('card-rank-txt').textContent='';
     document.getElementById('card-suit-txt').textContent='';
     document.getElementById('card-by').innerHTML='';
