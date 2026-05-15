@@ -559,8 +559,11 @@ async function drawCard(){
 async function startNewGame(){
   closeOverlay('ov-gameover');showLoading('새 게임 준비 중...');
   try{
+    // 현재 저장된 규칙 유지 — 덱/카드/왕만 리셋
+    const snap=await get(rRef(G.roomCode));
+    const currentRules=(snap.exists()&&snap.val().rules)?snap.val().rules:DR;
     const deck=makeDeck();
-    await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
+    await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
     G.gameOverShown=false;
     document.getElementById('card-display').innerHTML='<div class="card-back">👑</div>';
     document.getElementById('card-by').innerHTML='';
@@ -595,7 +598,15 @@ async function saveRules(){
   catch(e){hideLoading();alert('저장 실패: '+e.message);}
 }
 
-function resetRules(){document.querySelectorAll('.rule-input').forEach(i=>i.value=DR[i.dataset.rank]||'');}
+async function resetRules(){
+  if(!confirm('규칙을 기본값으로 되돌리시겠습니까?'))return;
+  document.querySelectorAll('.rule-input').forEach(i=>i.value=DR[i.dataset.rank]||'');
+  showLoading('기본값으로 초기화 중...');
+  try{
+    await update(rRef(G.roomCode),{rules:DR,lastUpdate:Date.now()});
+    hideLoading();closeOverlay('ov-rules');
+  }catch(e){hideLoading();}
+}
 
 function copyRoomCode(){const c=G.roomCode;navigator.clipboard?.writeText(c).then(()=>alert(`방 코드 "${c}" 복사!`)).catch(()=>alert('방 코드: '+c));}
 
