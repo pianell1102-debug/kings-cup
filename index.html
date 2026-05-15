@@ -166,6 +166,30 @@ input[type="text"]::placeholder{color:var(--text-3);}
 /* DRAW BUTTON */
 #btn-draw{padding:1rem;font-size:1.05rem;font-family:'Cinzel',serif;letter-spacing:.1em;font-weight:700;margin-bottom:.75rem;}
 
+/* CARD FLIP */
+.card-scene{width:115px;height:162px;perspective:600px;}
+.card-flipper{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(.4,0,.2,1);}
+.card-flipper.flipped{transform:rotateY(180deg);}
+.card-face,.card-back-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;}
+.card-back-face{
+  background:linear-gradient(145deg,#150d30,#0e0a20,#1c1440);
+  border:2px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+  overflow:hidden;
+}
+.card-back-face::before{content:'';position:absolute;inset:6px;border:1px solid rgba(219,168,50,.2);border-radius:10px;}
+.card-back-face::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 35% 35%,rgba(219,168,50,.07),transparent 60%);}
+.card-face{
+  transform:rotateY(180deg);
+  background:#f9f3e4;
+  border:2px solid rgba(219,168,50,.6);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6),0 2px 8px rgba(219,168,50,.15);
+}
+.card-face::before{content:'';position:absolute;inset:4px;border:1px solid rgba(0,0,0,.08);border-radius:10px;pointer-events:none;}
+
 /* LOG */
 .game-log{max-height:90px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .log-e{font-size:.76rem;color:var(--text-2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);line-height:1.4;}
@@ -291,7 +315,15 @@ input[type="text"]::placeholder{color:var(--text-3);}
 
   <div class="card-rule-row">
     <div class="card-col">
-      <div id="card-display"><div class="card-back">👑</div></div>
+      <div class="card-scene">
+        <div class="card-flipper" id="card-flipper">
+          <div class="card-back-face">👑</div>
+          <div class="card-face" id="card-face">
+            <div class="c-rank" id="card-rank-txt"></div>
+            <div class="c-suit" id="card-suit-txt"></div>
+          </div>
+        </div>
+      </div>
       <div class="card-by" id="card-by"></div>
     </div>
     <div class="rule-col" id="rule-col">
@@ -499,7 +531,13 @@ function updateGame(room){
   if(drawn.length>0){
     const last=drawn[drawn.length-1];
     const cc=isRed(last.s)?'c-red':'c-black';
-    document.getElementById('card-display').innerHTML=`<div class="playing-card"><div class="c-rank ${cc}">${last.r}</div><div class="c-suit ${cc}">${last.s}</div></div>`;
+    document.getElementById('card-rank-txt').className=`c-rank ${cc}`;
+    document.getElementById('card-rank-txt').textContent=last.r;
+    document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
+    document.getElementById('card-suit-txt').textContent=last.s;
+    // 다른 사람이 뽑은 경우 플립 (내가 뽑을 땐 drawCard에서 처리)
+    const flipper=document.getElementById('card-flipper');
+    if(!flipper.classList.contains('flipped')) flipper.classList.add('flipped');
     document.getElementById('card-by').innerHTML=`<strong>${last.by}</strong>님이 뽑음`;
     const rule=rules[last.r]||DR[last.r]||'';
     document.getElementById('rule-col').innerHTML=`
@@ -507,8 +545,12 @@ function updateGame(room){
       <div class="rule-card-name">${RANK_NAMES[last.r]||last.r}</div>
       <div class="rule-divider"></div>
       <div class="rule-desc">${rule}</div>`;
-    renderGrid(rules,last.r);
-  } else {renderGrid(rules,'');}
+  } else {
+    // 새 게임 — 뒷면으로 리셋
+    document.getElementById('card-flipper').classList.remove('flipped');
+    document.getElementById('card-by').innerHTML='';
+    document.getElementById('rule-col').innerHTML='<div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>';
+  }
 
   const log=room.log||{};
   const logEl=document.getElementById('game-log');
@@ -530,6 +572,9 @@ function updateGame(room){
 
 async function drawCard(){
   document.getElementById('btn-draw').disabled=true;
+  // 먼저 뒷면으로 리셋
+  const flipper=document.getElementById('card-flipper');
+  flipper.classList.remove('flipped');
   try{
     const snap=await get(rRef(G.roomCode));if(!snap.exists())return;
     const room=snap.val();
@@ -540,6 +585,18 @@ async function drawCard(){
     const drawn=room.drawn||[],deck=room.deck||[];
     if(drawn.length>=deck.length)return;
     const card=deck[drawn.length];
+
+    // 카드 앞면에 내용 미리 세팅
+    const cc=isRed(card.s)?'c-red':'c-black';
+    document.getElementById('card-rank-txt').className=`c-rank ${cc}`;
+    document.getElementById('card-rank-txt').textContent=card.r;
+    document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
+    document.getElementById('card-suit-txt').textContent=card.s;
+
+    // 잠깐 후 플립 (뒷면 보였다가 앞면으로)
+    await new Promise(r=>setTimeout(r,150));
+    flipper.classList.add('flipped');
+
     const newDrawn=[...drawn,{r:card.r,s:card.s,by:G.myName,t:Date.now()}];
     let kingsDrawn=room.kingsDrawn||0,gameOver=false,kingOv=false;
     if(card.r==='K'){kingsDrawn++;if(kingsDrawn>=4)gameOver=true;else kingOv=true;}
@@ -565,7 +622,9 @@ async function startNewGame(){
     const deck=makeDeck();
     await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
     G.gameOverShown=false;
-    document.getElementById('card-display').innerHTML='<div class="card-back">👑</div>';
+    document.getElementById('card-flipper').classList.remove('flipped');
+    document.getElementById('card-rank-txt').textContent='';
+    document.getElementById('card-suit-txt').textContent='';
     document.getElementById('card-by').innerHTML='';
     document.getElementById('rule-col').innerHTML='<div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>';
     renderGrid(DR,'');hideLoading();
