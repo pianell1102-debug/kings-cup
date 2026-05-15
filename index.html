@@ -166,15 +166,112 @@ input[type="text"]::placeholder{color:var(--text-3);}
 /* DRAW BUTTON */
 #btn-draw{padding:1rem;font-size:1.05rem;font-family:'Cinzel',serif;letter-spacing:.1em;font-weight:700;margin-bottom:.75rem;}
 
-/* CARD FLIP */
-.card-scene{width:115px;height:162px;perspective:700px;}
-.card-flipper{width:100%;height:100%;position:relative;transform-style:preserve-3d;}
-/* 룰 설명 페이드인 */
-@keyframes rule-fadein {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
+/* CARD FLIP - JS 전환 방식 */
+.card-scene { width:115px; height:162px; }
+.card-flipper { width:100%; height:100%; position:relative; }
+
+/* 뒷면 */
+.card-back-face {
+  position:absolute; inset:0; border-radius:14px;
+  background:linear-gradient(145deg,#150d30,#0e0a20,#1c1440);
+  border:2px solid var(--gold-dim);
+  display:flex; align-items:center; justify-content:center;
+  font-size:3rem;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+  overflow:hidden;
+  transition: opacity 0.1s;
 }
-.rule-fadein { animation: rule-fadein 0.4s ease forwards; }
+.card-back-face::before{content:'';position:absolute;inset:6px;border:1px solid rgba(219,168,50,.2);border-radius:10px;}
+.card-back-face::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 35% 35%,rgba(219,168,50,.07),transparent 60%);}
+
+/* 앞면 - 기본은 숨김 */
+.card-face {
+  position:absolute; inset:0; border-radius:14px;
+  background:#f9f3e4;
+  border:2px solid rgba(219,168,50,.6);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  box-shadow:0 10px 40px rgba(0,0,0,.6), 0 2px 8px rgba(219,168,50,.15);
+  opacity:0; pointer-events:none;
+}
+.card-face::before{content:'';position:absolute;inset:4px;border:1px solid rgba(0,0,0,.08);border-radius:10px;pointer-events:none;}
+
+/* 카드별 고유 등장 애니메이션 (앞면이 나타날 때) */
+@keyframes ca-A  { 0%{opacity:0;transform:translateY(-40px) scale(.75)} 60%{transform:translateY(6px) scale(1.06)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes ca-2  { 0%{opacity:0;transform:scaleX(0.1)} 60%{transform:scaleX(1.08)} 100%{opacity:1;transform:scaleX(1)} }
+@keyframes ca-3  { 0%{opacity:0;transform:scaleX(0.1)} 60%{transform:scaleX(1.08)} 100%{opacity:1;transform:scaleX(1)} }
+@keyframes ca-4  { 0%{opacity:0;transform:translateX(50px)} 70%{transform:translateX(-5px)} 100%{opacity:1;transform:translateX(0)} }
+@keyframes ca-5  { 0%{opacity:0;transform:translateX(-50px)} 70%{transform:translateX(5px)} 100%{opacity:1;transform:translateX(0)} }
+@keyframes ca-6  { 0%{opacity:0;transform:translateY(40px) scale(.8)} 60%{transform:translateY(-6px) scale(1.05)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes ca-7  { 0%{opacity:0;transform:translateY(30px)} 40%{transform:translateY(-20px)} 100%{opacity:1;transform:translateY(0)} }
+@keyframes ca-8  { 0%{opacity:0;transform:scale(.85)} 60%{transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }
+@keyframes ca-9  { 0%{opacity:0;transform:rotate(-8deg) scale(.9)} 40%{transform:rotate(5deg)} 70%{transform:rotate(-3deg)} 100%{opacity:1;transform:rotate(0) scale(1)} }
+@keyframes ca-10 { 0%{opacity:0;transform:scale(0.3)} 65%{transform:scale(1.12)} 100%{opacity:1;transform:scale(1)} }
+@keyframes ca-J  { 0%{opacity:0;transform:rotate(15deg) scale(.85)} 60%{transform:rotate(-5deg) scale(1.05)} 100%{opacity:1;transform:rotate(0) scale(1)} }
+@keyframes ca-Q  { 0%{opacity:0;transform:scale(.8) translateY(-15px)} 50%{transform:scale(1.06) translateY(-8px)} 100%{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes ca-K  { 0%{opacity:0;transform:scale(1.4)} 40%{transform:scale(.92)} 70%{transform:scale(1.1)} 100%{opacity:1;transform:scale(1)} }
+
+/* 앞면 등장 클래스 */
+.card-face.show { opacity:1; pointer-events:auto; }
+.card-face.show-A  { animation: ca-A  0.5s cubic-bezier(.34,1.4,.64,1) forwards; }
+.card-face.show-2  { animation: ca-2  0.35s cubic-bezier(.34,1.3,.64,1) forwards; }
+.card-face.show-3  { animation: ca-3  0.35s cubic-bezier(.34,1.3,.64,1) forwards; }
+.card-face.show-4  { animation: ca-4  0.45s cubic-bezier(.34,1.4,.64,1) forwards; }
+.card-face.show-5  { animation: ca-5  0.45s cubic-bezier(.34,1.4,.64,1) forwards; }
+.card-face.show-6  { animation: ca-6  0.5s cubic-bezier(.34,1.4,.64,1) forwards; }
+.card-face.show-7  { animation: ca-7  0.55s cubic-bezier(.34,1.56,.64,1) forwards; }
+.card-face.show-8  { animation: ca-8  0.7s cubic-bezier(.34,1.3,.64,1) forwards; }
+.card-face.show-9  { animation: ca-9  0.6s cubic-bezier(.34,1.3,.64,1) forwards; }
+.card-face.show-10 { animation: ca-10 0.55s cubic-bezier(.34,1.5,.64,1) forwards; }
+.card-face.show-J  { animation: ca-J  0.55s cubic-bezier(.34,1.4,.64,1) forwards; }
+.card-face.show-Q  { animation: ca-Q  0.65s cubic-bezier(.34,1.3,.64,1) forwards; }
+.card-face.show-K  { animation: ca-K  0.7s cubic-bezier(.34,1.5,.64,1) forwards; }
+
+/* 뒷면 → 뒤집힐 때 플립 애니메이션 */
+@keyframes back-flip-out {
+  0%   { transform: rotateY(0deg); opacity:1; }
+  45%  { transform: rotateY(85deg); opacity:1; }
+  50%  { transform: rotateY(90deg); opacity:0; }
+  100% { transform: rotateY(90deg); opacity:0; }
+}
+/* A: 낙하하며 */
+@keyframes back-A { 0%{transform:rotateY(0) translateY(0);opacity:1} 45%{transform:rotateY(80deg) translateY(-20px);opacity:1} 55%{transform:rotateY(90deg);opacity:0} 100%{opacity:0} }
+/* 2,3: 빠르게 */
+@keyframes back-23 { 0%{transform:rotateY(0);opacity:1} 40%{transform:rotateY(90deg);opacity:0} 100%{opacity:0} }
+/* 4: 오른쪽으로 */
+@keyframes back-45 { 0%{transform:rotateY(0) translateX(0);opacity:1} 45%{transform:rotateY(85deg) translateX(15px);opacity:1} 55%{opacity:0} 100%{opacity:0} }
+/* 6: 위로 */
+@keyframes back-6  { 0%{transform:rotateY(0) translateY(0);opacity:1} 45%{transform:rotateY(80deg) translateY(-15px);opacity:1} 55%{opacity:0} 100%{opacity:0} }
+/* 7: 위로 튀며 */
+@keyframes back-7  { 0%{transform:rotateY(0);opacity:1} 30%{transform:rotateY(50deg) translateY(-25px);opacity:1} 50%{transform:rotateY(90deg);opacity:0} 100%{opacity:0} }
+/* 8: 천천히 */
+@keyframes back-8  { 0%{transform:rotateY(0) scale(1);opacity:1} 50%{transform:rotateY(88deg) scale(1.08);opacity:1} 58%{opacity:0} 100%{opacity:0} }
+/* 9: 흔들며 */
+@keyframes back-9  { 0%{transform:rotateY(0) rotate(0);opacity:1} 25%{transform:rotateY(40deg) rotate(-5deg);opacity:1} 50%{transform:rotateY(88deg) rotate(3deg);opacity:0} 100%{opacity:0} }
+/* 10: 줌아웃 */
+@keyframes back-10 { 0%{transform:rotateY(0) scale(1);opacity:1} 40%{transform:rotateY(80deg) scale(.85);opacity:1} 52%{opacity:0} 100%{opacity:0} }
+/* J: 대각선 */
+@keyframes back-J  { 0%{transform:rotateY(0) rotate(0);opacity:1} 45%{transform:rotateY(85deg) rotate(10deg);opacity:1} 55%{opacity:0} 100%{opacity:0} }
+/* Q: 우아하게 */
+@keyframes back-Q  { 0%{transform:rotateY(0) scale(1);opacity:1} 45%{transform:rotateY(85deg) scale(1.05) translateY(-10px);opacity:1} 55%{opacity:0} 100%{opacity:0} }
+/* K: 강렬하게 */
+@keyframes back-K  { 0%{transform:rotateY(0) scale(1);opacity:1} 35%{transform:rotateY(75deg) scale(.9);opacity:1} 48%{opacity:0} 100%{opacity:0} }
+
+/* 뒷면 플립아웃 클래스 */
+.card-back-face.flip-out-A  { animation: back-A  0.6s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-2  { animation: back-23 0.35s cubic-bezier(.6,0,.1,1) forwards; }
+.card-back-face.flip-out-3  { animation: back-23 0.35s cubic-bezier(.6,0,.1,1) forwards; }
+.card-back-face.flip-out-4  { animation: back-45 0.5s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-5  { animation: back-45 0.5s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-6  { animation: back-6  0.5s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-7  { animation: back-7  0.55s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-8  { animation: back-8  0.75s cubic-bezier(.6,0,.1,1) forwards; }
+.card-back-face.flip-out-9  { animation: back-9  0.6s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-10 { animation: back-10 0.55s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-J  { animation: back-J  0.55s cubic-bezier(.55,0,.1,1) forwards; }
+.card-back-face.flip-out-Q  { animation: back-Q  0.65s cubic-bezier(.6,0,.1,1) forwards; }
+.card-back-face.flip-out-K  { animation: back-K  0.65s cubic-bezier(.7,0,.1,1) forwards; }
+
+/* LOG */
 
 /* 공통: 처음엔 천천히(ease-in), 90도 지점에서 확 빠르게 넘어감 */
 /* A: 낙하 + 느리게 시작 → 빠르게 뒤집힘 */
@@ -328,6 +425,10 @@ input[type="text"]::placeholder{color:var(--text-3);}
 }
 .card-face::before{content:'';position:absolute;inset:4px;border:1px solid rgba(0,0,0,.08);border-radius:10px;pointer-events:none;}
 
+/* 룰 페이드인 */
+@keyframes rule-fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.rule-fadein { animation: rule-fadein 0.4s ease forwards; }
+
 /* LOG */
 .game-log{max-height:90px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .log-e{font-size:.76rem;color:var(--text-2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);line-height:1.4;}
@@ -370,7 +471,7 @@ input[type="text"]::placeholder{color:var(--text-3);}
     <div class="crown-wrap"><span class="crown-icon">👑</span></div>
     <div class="game-title">왕의 성배</div>
     <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
-    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.3.0 &nbsp;·&nbsp; 2025.05</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.4.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
   <div class="config-notice" id="firebase-notice">
     🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
@@ -845,27 +946,29 @@ function updateGame(room){
     document.getElementById('card-rank-txt').textContent=last.r;
     document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
     document.getElementById('card-suit-txt').textContent=last.s;
-    // 다른 사람이 뽑은 경우 플립
-    const flipper=document.getElementById('card-flipper');
-    const flipDur={'A':1100,'2':900,'3':900,'4':1000,'5':1000,'6':1000,'7':1100,'8':1400,'9':1100,'10':1000,'J':1000,'Q':1300,'K':1300};
-    if(!flipper.classList.contains(`flip-${last.r}`)){
-      flipper.className='card-flipper';
-      void flipper.offsetWidth;
-      flipper.classList.add(`flip-${last.r}`);
-      // 룰 플립 후 표시
-      document.getElementById('rule-col').innerHTML='';
+    const flipper2=document.getElementById('card-flipper');
+    const flipDur2={'A':320,'2':175,'3':175,'4':270,'5':270,'6':280,'7':300,'8':400,'9':320,'10':295,'J':295,'Q':350,'K':340};
+    const showDur2={'A':500,'2':350,'3':350,'4':450,'5':450,'6':500,'7':550,'8':700,'9':600,'10':550,'J':550,'Q':650,'K':700};
+    const bf=document.getElementById('card-back-face');
+    const ff=document.getElementById('card-face');
+    if(!ff.classList.contains(`show-${last.r}`)){
+      bf.className=`card-back-face flip-out-${last.r}`;
       setTimeout(()=>{
-        const rule=rules[last.r]||DR[last.r]||'';
-        document.getElementById('rule-col').innerHTML=`
-          <div class="rule-badge-rank rule-fadein" style="animation-delay:0s">${last.r}</div>
-          <div class="rule-card-name rule-fadein" style="animation-delay:0.08s">${RANK_NAMES[last.r]||last.r}</div>
-          <div class="rule-divider rule-fadein" style="animation-delay:0.12s"></div>
-          <div class="rule-desc rule-fadein" style="animation-delay:0.18s">${rule}</div>`;
-      }, flipDur[last.r]||1000);
+        ff.className=`card-face show-${last.r}`;
+        setTimeout(()=>{
+          const rule=rules[last.r]||DR[last.r]||'';
+          document.getElementById('rule-col').innerHTML=`
+            <div class="rule-badge-rank rule-fadein" style="animation-delay:0s">${last.r}</div>
+            <div class="rule-card-name rule-fadein" style="animation-delay:0.08s">${RANK_NAMES[last.r]||last.r}</div>
+            <div class="rule-divider rule-fadein" style="animation-delay:0.12s"></div>
+            <div class="rule-desc rule-fadein" style="animation-delay:0.18s">${rule}</div>`;
+        }, showDur2[last.r]||500);
+      }, flipDur2[last.r]||300);
     }
   } else {
     // 새 게임 — 뒷면으로 리셋
-    document.getElementById('card-flipper').classList.remove('flipped');
+    document.getElementById('card-back-face').className='card-back-face';
+    document.getElementById('card-face').className='card-face';
     document.getElementById('card-by').innerHTML='';
     document.getElementById('rule-col').innerHTML='<div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>';
   }
@@ -890,10 +993,11 @@ function updateGame(room){
 
 async function drawCard(){
   document.getElementById('btn-draw').disabled=true;
-  // 먼저 뒷면으로 리셋
-  const flipper=document.getElementById('card-flipper');
-  flipper.className='card-flipper';
-  void flipper.offsetWidth;
+  // 카드 뒷면으로 리셋
+  document.getElementById('card-back-face').className='card-back-face';
+  document.getElementById('card-face').className='card-face';
+  document.getElementById('card-by').innerHTML='';
+  document.getElementById('rule-col').innerHTML='';
   try{
     const snap=await get(rRef(G.roomCode));if(!snap.exists())return;
     const room=snap.val();
@@ -912,48 +1016,55 @@ async function drawCard(){
     document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
     document.getElementById('card-suit-txt').textContent=card.s;
 
-    // 룰 영역 플립 전엔 비워두기
+    // 룰 영역 비우기
     document.getElementById('rule-col').innerHTML='';
 
-    // 카드별 고유 플립 애니메이션 적용
     await new Promise(r=>setTimeout(r,120));
-    const flipper=document.getElementById('card-flipper');
-    flipper.className='card-flipper';
-    void flipper.offsetWidth;
-    flipper.classList.add(`flip-${card.r}`);
 
-    // 플립 시작과 동시에 효과음 재생
+    // 뒷면 flip-out 애니메이션
+    const backFace = document.getElementById('card-back-face');
+    const frontFace = document.getElementById('card-face');
+    backFace.className = `card-back-face flip-out-${card.r}`;
+
+    // 카드별 뒷면→앞면 전환 타이밍
+    const flipDuration={
+      'A':320,'2':175,'3':175,'4':270,'5':270,
+      '6':280,'7':300,'8':400,'9':320,'10':295,
+      'J':295,'Q':350,'K':340
+    };
+    const flipTime = flipDuration[card.r] || 300;
+
+    // 효과음 재생
     playSound(card.r);
 
-    // 카드별 애니메이션 시간 (ms) — 플립 완료 후 룰 표시
-    const flipDuration={
-      'A':1100,'2':900,'3':900,'4':1000,'5':1000,
-      '6':1000,'7':1100,'8':1400,'9':1100,'10':1000,
-      'J':1000,'Q':1300,'K':1300
-    };
-    const waitTime = flipDuration[card.r] || 1000;
+    // 뒷면이 사라지는 시점에 앞면 등장
+    await new Promise(r=>setTimeout(r, flipTime));
+    frontFace.className = `card-face show-${card.r}`;
 
-    // K: 진동 + 화면 흔들기 (플립 60% 시점)
+    // 앞면 등장 애니메이션 시간
+    const showDuration={
+      'A':500,'2':350,'3':350,'4':450,'5':450,
+      '6':500,'7':550,'8':700,'9':600,'10':550,
+      'J':550,'Q':650,'K':700
+    };
+    const showTime = showDuration[card.r] || 500;
+
+    // K: 진동 + 화면 흔들기
     if(card.r==='K'){
       setTimeout(()=>{
-        // 핸드폰 진동 (Vibration API)
-        if(navigator.vibrate){
-          navigator.vibrate([80, 50, 80, 50, 200]);
-        }
-        // 화면 진동
+        if(navigator.vibrate) navigator.vibrate([80,50,80,50,200]);
         document.getElementById('app').classList.remove('shake');
         void document.getElementById('app').offsetWidth;
         document.getElementById('app').classList.add('shake');
         setTimeout(()=>document.getElementById('app').classList.remove('shake'), 550);
-      }, waitTime * 0.6);
+      }, showTime * 0.4);
     }
 
-    // 플립 완료 후 룰 표시
-    await new Promise(r=>setTimeout(r, waitTime));
+    // 앞면 등장 완료 후 룰 표시
+    await new Promise(r=>setTimeout(r, showTime));
     const rules2=room.rules||DR;
     const rule=rules2[card.r]||DR[card.r]||'';
-    const ruleCol=document.getElementById('rule-col');
-    ruleCol.innerHTML=`
+    document.getElementById('rule-col').innerHTML=`
       <div class="rule-badge-rank rule-fadein" style="animation-delay:0s">${card.r}</div>
       <div class="rule-card-name rule-fadein" style="animation-delay:0.08s">${RANK_NAMES[card.r]||card.r}</div>
       <div class="rule-divider rule-fadein" style="animation-delay:0.12s"></div>
@@ -985,8 +1096,8 @@ async function startNewGame(){
     const deck=makeDeck();
     await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
     G.gameOverShown=false;
-    const flipper=document.getElementById('card-flipper');
-    flipper.className='card-flipper';
+    document.getElementById('card-back-face').className='card-back-face';
+    document.getElementById('card-face').className='card-face';
     document.getElementById('card-rank-txt').textContent='';
     document.getElementById('card-suit-txt').textContent='';
     document.getElementById('card-by').innerHTML='';
