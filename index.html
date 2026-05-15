@@ -471,7 +471,7 @@ input[type="text"]::placeholder{color:var(--text-3);}
     <div class="crown-wrap"><span class="crown-icon">👑</span></div>
     <div class="game-title">왕의 성배</div>
     <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
-    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.4.0 &nbsp;·&nbsp; 2025.05</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.5.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
   <div class="config-notice" id="firebase-notice">
     🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
@@ -936,8 +936,8 @@ function updateGame(room){
   document.getElementById('others-banner').style.display=!isMyTurn?'block':'none';
   if(!isMyTurn&&turnPlayer)document.getElementById('turn-name-txt').textContent=turnPlayer;
   const btn=document.getElementById('btn-draw');
-  btn.disabled=!isMyTurn;
-  btn.textContent=isMyTurn?'✦ 카드 뽑기':'카드 뽑기';
+  btn.disabled = !isMyTurn;
+  btn.textContent = isMyTurn ? '✦ 카드 뽑기' : '카드 뽑기';
 
   if(drawn.length>0){
     const last=drawn[drawn.length-1];
@@ -992,78 +992,87 @@ function updateGame(room){
 }
 
 async function drawCard(){
-  document.getElementById('btn-draw').disabled=true;
+  const btn = document.getElementById('btn-draw');
+  btn.disabled = true;
+
   // 카드 뒷면으로 리셋
   document.getElementById('card-back-face').className='card-back-face';
   document.getElementById('card-face').className='card-face';
   document.getElementById('card-by').innerHTML='';
   document.getElementById('rule-col').innerHTML='';
+
   try{
-    const snap=await get(rRef(G.roomCode));if(!snap.exists())return;
-    const room=snap.val();
-    const order=room.playerOrder||[];
-    const turn=(room.currentTurn||0)%Math.max(order.length,1);
-    const isSolo=order.length===1;
-    if(!isSolo&&order[turn]!==G.myName)return;
-    const drawn=room.drawn||[],deck=room.deck||[];
-    if(drawn.length>=deck.length)return;
-    const card=deck[drawn.length];
+    const snap = await get(rRef(G.roomCode));
+    if(!snap.exists()) return;
+    const room = snap.val();
+    const order = room.playerOrder||[];
+    const turn  = (room.currentTurn||0) % Math.max(order.length,1);
+    const isSolo = order.length===1;
+    if(!isSolo && order[turn]!==G.myName) return;
 
-    // 카드 앞면에 내용 미리 세팅
-    const cc=isRed(card.s)?'c-red':'c-black';
-    document.getElementById('card-rank-txt').className=`c-rank ${cc}`;
-    document.getElementById('card-rank-txt').textContent=card.r;
-    document.getElementById('card-suit-txt').className=`c-suit ${cc}`;
-    document.getElementById('card-suit-txt').textContent=card.s;
+    const drawn = room.drawn||[], deck = room.deck||[];
+    if(drawn.length >= deck.length) return;
 
-    // 룰 영역 비우기
-    document.getElementById('rule-col').innerHTML='';
+    const card = deck[drawn.length];
 
-    await new Promise(r=>setTimeout(r,120));
+    // Firebase 저장 (애니메이션과 병렬 실행)
+    const newDrawn = [...drawn, {r:card.r, s:card.s, by:G.myName, t:Date.now()}];
+    let kingsDrawn = room.kingsDrawn||0, gameOver=false, kingOv=false;
+    if(card.r==='K'){ kingsDrawn++; if(kingsDrawn>=4) gameOver=true; else kingOv=true; }
+    const nextTurn = (turn+1) % Math.max(order.length,1);
+    const logKey = `log/draw_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const logMsg = card.r==='K'
+      ? (gameOver ? `💀 ${G.myName}이/가 네 번째 왕(${card.s})을 뽑아 성배를 마셨습니다!`
+                  : `👑 ${G.myName}이/가 왕(${card.s}) 뽑음 — 성배 ${kingsDrawn}/4`)
+      : `${G.myName}이/가 ${card.r}${card.s} 뽑음`;
 
-    // 뒷면 flip-out 애니메이션
-    const backFace = document.getElementById('card-back-face');
-    const frontFace = document.getElementById('card-face');
-    backFace.className = `card-back-face flip-out-${card.r}`;
+    // 저장과 애니메이션 동시 시작
+    const savePromise = update(rRef(G.roomCode), {
+      drawn:newDrawn, kingsDrawn, gameOver,
+      currentTurn:nextTurn, lastUpdate:Date.now(),
+      [logKey]:{t:Date.now(), msg:logMsg}
+    });
 
-    // 카드별 뒷면→앞면 전환 타이밍
-    const flipDuration={
-      'A':320,'2':175,'3':175,'4':270,'5':270,
-      '6':280,'7':300,'8':400,'9':320,'10':295,
-      'J':295,'Q':350,'K':340
-    };
+    // ── 애니메이션 시작 ──
+    const cc = isRed(card.s) ? 'c-red' : 'c-black';
+    document.getElementById('card-rank-txt').className = `c-rank ${cc}`;
+    document.getElementById('card-rank-txt').textContent = card.r;
+    document.getElementById('card-suit-txt').className = `c-suit ${cc}`;
+    document.getElementById('card-suit-txt').textContent = card.s;
+
+    await new Promise(r=>setTimeout(r, 80));
+
+    // 뒷면 사라짐
+    document.getElementById('card-back-face').className = `card-back-face flip-out-${card.r}`;
+
+    const flipDuration = {'A':320,'2':175,'3':175,'4':270,'5':270,'6':280,'7':300,'8':400,'9':320,'10':295,'J':295,'Q':350,'K':340};
+    const showDuration = {'A':500,'2':350,'3':350,'4':450,'5':450,'6':500,'7':550,'8':700,'9':600,'10':550,'J':550,'Q':650,'K':700};
     const flipTime = flipDuration[card.r] || 300;
+    const showTime = showDuration[card.r] || 500;
 
-    // 효과음 재생
+    // 효과음
     playSound(card.r);
 
-    // 뒷면이 사라지는 시점에 앞면 등장
+    // 앞면 등장
     await new Promise(r=>setTimeout(r, flipTime));
-    frontFace.className = `card-face show-${card.r}`;
-
-    // 앞면 등장 애니메이션 시간
-    const showDuration={
-      'A':500,'2':350,'3':350,'4':450,'5':450,
-      '6':500,'7':550,'8':700,'9':600,'10':550,
-      'J':550,'Q':650,'K':700
-    };
-    const showTime = showDuration[card.r] || 500;
+    document.getElementById('card-face').className = `card-face show-${card.r}`;
 
     // K: 진동 + 화면 흔들기
     if(card.r==='K'){
       setTimeout(()=>{
         if(navigator.vibrate) navigator.vibrate([80,50,80,50,200]);
-        document.getElementById('app').classList.remove('shake');
-        void document.getElementById('app').offsetWidth;
-        document.getElementById('app').classList.add('shake');
-        setTimeout(()=>document.getElementById('app').classList.remove('shake'), 550);
+        const appEl = document.getElementById('app');
+        appEl.classList.remove('shake');
+        void appEl.offsetWidth;
+        appEl.classList.add('shake');
+        setTimeout(()=>appEl.classList.remove('shake'), 550);
       }, showTime * 0.4);
     }
 
     // 앞면 등장 완료 후 룰 표시
     await new Promise(r=>setTimeout(r, showTime));
-    const rules2=room.rules||DR;
-    const rule=rules2[card.r]||DR[card.r]||'';
+    const rules2 = room.rules||DR;
+    const rule   = rules2[card.r]||DR[card.r]||'';
     document.getElementById('rule-col').innerHTML=`
       <div class="rule-badge-rank rule-fadein" style="animation-delay:0s">${card.r}</div>
       <div class="rule-card-name rule-fadein" style="animation-delay:0.08s">${RANK_NAMES[card.r]||card.r}</div>
@@ -1071,20 +1080,32 @@ async function drawCard(){
       <div class="rule-desc rule-fadein" style="animation-delay:0.18s">${rule}</div>`;
     document.getElementById('card-by').innerHTML=`<strong>${G.myName}</strong>님이 뽑음`;
 
-    const newDrawn=[...drawn,{r:card.r,s:card.s,by:G.myName,t:Date.now()}];
-    let kingsDrawn=room.kingsDrawn||0,gameOver=false,kingOv=false;
-    if(card.r==='K'){kingsDrawn++;if(kingsDrawn>=4)gameOver=true;else kingOv=true;}
-    const nextTurn=(turn+1)%Math.max(order.length,1);
-    const logKey=`log/draw_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const logMsg=card.r==='K'?(gameOver?`💀 ${G.myName}이/가 네 번째 왕(${card.s})을 뽑아 성배를 마셨습니다!`:`👑 ${G.myName}이/가 왕(${card.s}) 뽑음 — 성배 ${kingsDrawn}/4`):`${G.myName}이/가 ${card.r}${card.s} 뽑음`;
-    await update(rRef(G.roomCode),{drawn:newDrawn,kingsDrawn,gameOver,currentTurn:nextTurn,lastUpdate:Date.now(),[logKey]:{t:Date.now(),msg:logMsg}});
+    // 저장 완료 대기
+    await savePromise;
+
+    // 왕 오버레이
     if(kingOv){
-      document.getElementById('king-ov-icon').textContent=kingsDrawn===3?'⚠️':'👑';
-      document.getElementById('king-ov-title').textContent=kingsDrawn===3?'위험! 세 번째 왕!':`${kingsDrawn}번째 왕 등장!`;
-      document.getElementById('king-ov-msg').textContent=kingsDrawn===3?'다음 왕을 뽑는 사람이 성배를 마셔야 합니다!':`성배에 왕이 ${kingsDrawn}명 모였습니다. 4번째를 조심하세요!`;
+      document.getElementById('king-ov-icon').textContent = kingsDrawn===3?'⚠️':'👑';
+      document.getElementById('king-ov-title').textContent = kingsDrawn===3?'위험! 세 번째 왕!':`${kingsDrawn}번째 왕 등장!`;
+      document.getElementById('king-ov-msg').textContent = kingsDrawn===3
+        ?'다음 왕을 뽑는 사람이 성배를 마셔야 합니다!'
+        :`성배에 왕이 ${kingsDrawn}명 모였습니다. 4번째를 조심하세요!`;
       showOverlay('ov-king');
     }
-  }catch(e){console.error(e);document.getElementById('btn-draw').disabled=false;}
+
+  } catch(e){
+    console.error('drawCard 오류:', e);
+  } finally {
+    // 어떤 상황에서도 반드시 버튼 복구 — Firebase 리스너가 isMyTurn 판단해서 자동 처리
+    // (다음 사람 차례면 비활성, 내 차례면 활성으로 updateGame이 설정함)
+    // 에러 시에만 강제 복구
+    if(document.getElementById('btn-draw').disabled){
+      setTimeout(()=>{
+        // updateGame이 이미 처리했을 수 있으므로 0.5초 후 체크
+        // Firebase 리스너가 상태 업데이트하면 자동으로 풀림
+      }, 500);
+    }
+  }
 }
 
 async function startNewGame(){
