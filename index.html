@@ -685,9 +685,9 @@ input[type="text"]::placeholder { color: var(--text-dim); }
 
     <div class="panel">
       <div class="panel-label">방 코드로 입장</div>
-      <input type="text" id="input-room" placeholder="방 코드 4자리..." maxlength="4"
-             style="text-transform:uppercase; letter-spacing:0.12em; font-family:'Cinzel',serif; font-size:1.1rem; text-align:center;"
-             autocomplete="off" />
+      <input type="text" id="input-room" placeholder="방 코드 2자리..." maxlength="2"
+             style="letter-spacing:0.2em; font-family:'Cinzel',serif; font-size:1.8rem; text-align:center;"
+             autocomplete="off" inputmode="numeric" />
       <button class="btn" style="margin-top:6px;" onclick="joinRoom()">입장하기 →</button>
       <div id="join-error" class="error-msg"></div>
     </div>
@@ -829,8 +829,13 @@ input[type="text"]::placeholder { color: var(--text-dim); }
 <div class="overlay hidden" id="overlay-rules">
   <div class="overlay-box" style="max-height:85vh; overflow-y:auto; max-width:380px;">
     <div class="overlay-title">📜 게임 규칙</div>
-    <div class="rules-list" id="rules-content" style="margin:1rem 0;"></div>
-    <button class="btn" onclick="closeOverlay('overlay-rules')">닫기</button>
+    <div style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 12px;" id="rules-edit-hint">방장은 규칙을 직접 수정할 수 있어요</div>
+    <div class="rules-list" id="rules-content" style="margin:0.5rem 0;"></div>
+    <div id="rules-save-btn" style="display:none; margin-top:12px;">
+      <button class="btn btn-gold" style="margin-bottom:6px;" onclick="saveRules()">💾 규칙 저장</button>
+      <button class="btn" style="margin-bottom:6px;" onclick="resetRules()">↺ 기본값으로</button>
+    </div>
+    <button class="btn" style="margin-top:6px;" onclick="closeOverlay('overlay-rules')">닫기</button>
   </div>
 </div>
 
@@ -897,8 +902,7 @@ const G = {
 
 // ─── 유틸 ─────────────────────────────────────────────────────
 function genCode() {
-  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({length:4}, () => c[Math.floor(Math.random()*c.length)]).join('');
+  return String(Math.floor(Math.random() * 90) + 10);
 }
 
 function shuffle(arr) {
@@ -996,7 +1000,7 @@ async function joinRoom() {
   const name = document.getElementById('input-name').value.trim();
   const code = document.getElementById('input-room').value.trim().toUpperCase();
   if (!name) { showErr('name-error','이름을 입력해 주세요'); return; }
-  if (code.length !== 4) { showErr('join-error','방 코드 4자리를 입력해 주세요'); return; }
+  if (code.length !== 2 || isNaN(code)) { showErr('join-error','방 코드 2자리 숫자를 입력해 주세요'); return; }
 
   showLoading('방을 찾는 중...');
   try {
@@ -1058,12 +1062,14 @@ function updateWaiting(room) {
   document.getElementById('guest-waiting-msg').style.display = amHost ? 'none'  : 'block';
 
   const btn = document.getElementById('btn-start');
-  if (order.length >= 2) {
-    btn.disabled     = false;
-    btn.textContent  = `✦ 게임 시작 (${order.length}명)`;
+  if (order.length >= 1) {
+    btn.disabled    = false;
+    btn.textContent = order.length === 1
+      ? `✦ 혼자 시작하기`
+      : `✦ 게임 시작 (${order.length}명)`;
   } else {
-    btn.disabled     = true;
-    btn.textContent  = '게임 시작 (최소 2명 필요)';
+    btn.disabled    = true;
+    btn.textContent = '게임 시작';
   }
 }
 
@@ -1132,12 +1138,13 @@ function updateGame(room) {
   }
 
   // Turn
-  const turn      = (room.currentTurn || 0) % order.length;
+  const turn      = (room.currentTurn || 0) % Math.max(order.length, 1);
   const turnPlayer = order[turn];
-  const isMyTurn   = turnPlayer === G.myName && !room.gameOver;
+  const isSolo     = order.length === 1;
+  const isMyTurn   = (turnPlayer === G.myName || isSolo) && !room.gameOver;
 
-  document.getElementById('my-turn-banner').style.display     = isMyTurn    ? 'block' : 'none';
-  document.getElementById('others-turn-banner').style.display = !isMyTurn   ? 'block' : 'none';
+  document.getElementById('my-turn-banner').style.display     = isMyTurn  ? 'block' : 'none';
+  document.getElementById('others-turn-banner').style.display = !isMyTurn ? 'block' : 'none';
   if (!isMyTurn && turnPlayer) {
     document.getElementById('current-turn-name').textContent = turnPlayer;
   }
@@ -1201,8 +1208,9 @@ async function drawCard() {
     const room = snap.val();
 
     const order = room.playerOrder || [];
-    const turn  = (room.currentTurn || 0) % order.length;
-    if (order[turn] !== G.myName) return;
+    const turn  = (room.currentTurn || 0) % Math.max(order.length, 1);
+    const isSolo = order.length === 1;
+    if (!isSolo && order[turn] !== G.myName) return;
 
     const drawn = room.drawn || [];
     const deck  = room.deck  || [];
@@ -1289,15 +1297,57 @@ function confirmNewGame() {
 
 // ─── MISC ─────────────────────────────────────────────────────
 function viewRules() {
-  const rules = DEFAULT_RULES;
-  document.getElementById('rules-content').innerHTML =
-    Object.entries(rules).map(([rank, desc]) =>
-      `<div class="rule-item">
-        <span class="rule-item-rank">${rank}</span>
-        <span class="rule-item-desc">${desc}</span>
-      </div>`
-    ).join('');
+  // 현재 방 규칙 또는 기본 규칙 사용
+  const snap_get = async () => {
+    let rules = DEFAULT_RULES;
+    if (G.roomCode) {
+      try {
+        const snap = await get(roomRef(G.roomCode));
+        if (snap.exists() && snap.val().rules) rules = snap.val().rules;
+      } catch(e) {}
+    }
+    const isHost = G.isHost;
+    document.getElementById('rules-content').innerHTML =
+      Object.entries(rules).map(([rank, desc]) => `
+        <div class="rule-item" style="align-items:center;">
+          <span class="rule-item-rank">${rank}</span>
+          ${isHost
+            ? `<input type="text" class="rule-input" data-rank="${rank}" value="${desc}"
+                style="flex:1; font-size:0.85rem; padding:4px 8px; background:var(--bg-surface);
+                border:1px solid var(--border); border-radius:6px; color:var(--text-primary);
+                font-family:'Noto Sans KR',sans-serif;" />`
+            : `<span class="rule-item-desc">${desc}</span>`
+          }
+        </div>`
+      ).join('');
+    if (isHost) {
+      document.getElementById('rules-save-btn').style.display = 'block';
+    } else {
+      document.getElementById('rules-save-btn').style.display = 'none';
+    }
+  };
+  snap_get();
   showOverlay('overlay-rules');
+}
+
+async function saveRules() {
+  const inputs = document.querySelectorAll('.rule-input');
+  const newRules = {};
+  inputs.forEach(inp => {
+    newRules[inp.dataset.rank] = inp.value.trim() || DEFAULT_RULES[inp.dataset.rank];
+  });
+  showLoading('규칙 저장 중...');
+  try {
+    await update(roomRef(G.roomCode), { rules: newRules, lastUpdate: Date.now() });
+    hideLoading();
+    closeOverlay('overlay-rules');
+  } catch(e) { hideLoading(); alert('저장 실패: ' + e.message); }
+}
+
+function resetRules() {
+  document.querySelectorAll('.rule-input').forEach(inp => {
+    inp.value = DEFAULT_RULES[inp.dataset.rank] || '';
+  });
 }
 
 function copyRoomCode() {
@@ -1321,9 +1371,9 @@ function leaveGame() {
   showScreen('lobby');
 }
 
-// input 자동 대문자
+// input — 숫자만 허용
 document.getElementById('input-room').addEventListener('input', function() {
-  this.value = this.value.toUpperCase();
+  this.value = this.value.replace(/\D/g, '').slice(0, 2);
 });
 
 // Firebase 설정 자동 감지
@@ -1339,6 +1389,8 @@ window.drawCard        = drawCard;
 window.startNewGame    = startNewGame;
 window.confirmNewGame  = confirmNewGame;
 window.viewRules       = viewRules;
+window.saveRules       = saveRules;
+window.resetRules      = resetRules;
 window.copyRoomCode    = copyRoomCode;
 window.leaveGame       = leaveGame;
 window.closeOverlay    = closeOverlay;
