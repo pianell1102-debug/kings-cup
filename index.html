@@ -1,1399 +1,630 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="왕의 성배" />
-<meta name="theme-color" content="#0f0a1e" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#060410"/>
 <title>왕의 성배</title>
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
-
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg-deep:    #0f0a1e;
-  --bg-card:    #1a1230;
-  --bg-surface: #231843;
-  --bg-glass:   rgba(255,255,255,0.04);
-  --gold:       #d4a843;
-  --gold-light: #f0c96a;
-  --gold-dim:   #8a6a20;
-  --crimson:    #c0392b;
-  --crimson-light: #e74c3c;
-  --purple:     #7b2d8b;
-  --purple-light: #9b59b6;
-  --text-primary:   #f0e8d0;
-  --text-secondary: #a89878;
-  --text-dim:       #5a5070;
-  --border:     rgba(212,168,67,0.2);
-  --border-hover: rgba(212,168,67,0.5);
-  --radius-sm:  8px;
-  --radius-md:  14px;
-  --radius-lg:  20px;
+  --bg:#060410; --bg-card:#0e0a20; --bg-panel:#130f28; --bg-surface:#1a1535;
+  --gold:#dba832; --gold-lt:#f2cc6b; --gold-dim:#7a5a10; --gold-glow:rgba(219,168,50,0.4);
+  --red:#a01515; --red-lt:#ef4444; --red-glow:rgba(160,21,21,0.5);
+  --purple:#5b21b6; --purple-lt:#8b5cf6;
+  --teal-lt:#2dd4bf;
+  --text:#f0e6cc; --text-2:#a8905c; --text-3:#4a3f60;
+  --border:rgba(219,168,50,0.15); --border-2:rgba(219,168,50,0.45);
+  --r-sm:10px; --r-md:16px; --r-lg:24px;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;}
+body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  height: 100%;
-  background: var(--bg-deep);
-  color: var(--text-primary);
-  font-family: 'Noto Sans KR', sans-serif;
-  overflow-x: hidden;
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%,rgba(91,33,182,.30) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 45% at 85% 80%,rgba(160,21,21,.20) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 90%,rgba(15,118,110,.12) 0%,transparent 55%);
+  pointer-events:none;
 }
-
-/* Background pattern */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(123,45,139,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(192,57,43,0.15) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(1px 1px at 10% 15%,rgba(219,168,50,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 25% 35%,rgba(219,168,50,.4) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 8%,rgba(255,255,255,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 20%,rgba(219,168,50,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 5%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 30%,rgba(219,168,50,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 92% 12%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 5% 60%,rgba(219,168,50,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 75%,rgba(255,255,255,.25) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 50% 55%,rgba(219,168,50,.35) 0%,transparent 100%),
+    radial-gradient(1px 1px at 70% 65%,rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 90% 70%,rgba(219,168,50,.4) 0%,transparent 100%);
+  animation:twinkle 6s ease-in-out infinite alternate;
 }
+@keyframes twinkle{from{opacity:.5}to{opacity:1}}
 
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-}
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
 
-#app {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+.screen{display:none;width:100%;max-width:460px;padding:0 1rem 3rem;}
+.screen.active{display:flex;flex-direction:column;animation:fadeUp .5s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-.screen {
-  display: none;
-  width: 100%;
-  max-width: 440px;
-  padding: 0 1rem 2rem;
-  animation: fadeIn 0.4s ease;
-}
-.screen.active { display: flex; flex-direction: column; }
+/* HEADER */
+.game-header{text-align:center;padding:2rem 0 1.25rem;}
+.crown-wrap{position:relative;display:inline-block;margin-bottom:.5rem;}
+.crown-icon{font-size:3.5rem;display:block;animation:crown-float 5s ease-in-out infinite;filter:drop-shadow(0 0 18px var(--gold-glow));}
+@keyframes crown-float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.crown-wrap::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:60px;height:12px;background:radial-gradient(ellipse,var(--gold-glow) 0%,transparent 70%);border-radius:50%;animation:crown-float 5s ease-in-out infinite;}
+.game-title{font-family:'Cinzel Decorative',serif;font-size:1.7rem;font-weight:900;background:linear-gradient(160deg,#f2cc6b 0%,#dba832 40%,#a07020 70%,#dba832 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 2px 8px rgba(219,168,50,.3));}
+.game-subtitle{font-size:.72rem;color:var(--text-2);letter-spacing:.18em;text-transform:uppercase;margin-top:5px;}
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* ORNAMENT */
+.ornament{display:flex;align-items:center;gap:10px;margin:.5rem 0;font-size:.7rem;color:var(--text-3);letter-spacing:.1em;}
+.ornament::before,.ornament::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border-2),transparent);}
 
-/* ── HEADER ── */
-.game-header {
-  text-align: center;
-  padding: 2.5rem 0 1.5rem;
-}
-.crown-glyph {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.5rem;
-  animation: float 4s ease-in-out infinite;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-6px); }
-}
-.game-title {
-  font-family: 'Cinzel', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 0.06em;
-  text-shadow: 0 0 30px rgba(212,168,67,0.4);
-}
-.game-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
+/* PANEL */
+.panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.2rem 1.25rem;margin-bottom:.8rem;position:relative;overflow:hidden;}
+.panel::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--border-2),transparent);}
+.panel::after{content:'✦';position:absolute;top:6px;right:10px;font-size:.5rem;color:var(--gold-dim);opacity:.6;}
+.panel-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.8rem;font-weight:600;font-family:'Cinzel',serif;}
 
-/* ── PANELS ── */
-.panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  margin-bottom: 0.75rem;
-  position: relative;
-  overflow: hidden;
-}
-.panel::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212,168,67,0.4), transparent);
-}
-.panel-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold-dim);
-  margin-bottom: 0.75rem;
-  font-weight: 500;
-}
+/* INPUT */
+input[type="text"]{width:100%;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:.75rem 1rem;font-size:1rem;font-family:'Noto Sans KR',sans-serif;color:var(--text);outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:.5rem;}
+input[type="text"]:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(219,168,50,.12);}
+input[type="text"]::placeholder{color:var(--text-3);}
 
-/* ── INPUTS ── */
-input[type="text"] {
-  width: 100%;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  color: var(--text-primary);
-  font-family: 'Noto Sans KR', sans-serif;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  margin-bottom: 0.5rem;
-}
-input[type="text"]:focus {
-  border-color: var(--gold-dim);
-  box-shadow: 0 0 0 3px rgba(212,168,67,0.1);
-}
-input[type="text"]::placeholder { color: var(--text-dim); }
+/* BUTTONS */
+.btn{width:100%;padding:.9rem 1rem;border-radius:var(--r-sm);font-size:.95rem;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg-surface);color:var(--text);transition:all .2s;letter-spacing:.03em;position:relative;overflow:hidden;}
+.btn:hover:not(:disabled){border-color:var(--border-2);background:rgba(219,168,50,.07);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.btn:active:not(:disabled){transform:scale(.97);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-gold{background:linear-gradient(135deg,#7a5010 0%,#c8901a 30%,#dba832 55%,#c8901a 75%,#7a5010 100%);border:1px solid #dba832;color:#0e0a20;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;box-shadow:0 4px 24px rgba(219,168,50,.35),inset 0 1px 0 rgba(255,255,255,.15);}
+.btn-gold:hover:not(:disabled){background:linear-gradient(135deg,#9a6a18 0%,#e0a828 30%,#f2cc6b 55%,#e0a828 75%,#9a6a18 100%);box-shadow:0 6px 32px rgba(219,168,50,.55);}
+.btn-red{background:rgba(160,21,21,.25);border-color:rgba(160,21,21,.5);color:#fca5a5;}
+.btn-red:hover:not(:disabled){background:rgba(160,21,21,.4);}
+.btn-purple{background:rgba(91,33,182,.25);border-color:rgba(139,92,246,.4);color:#c4b5fd;}
+.btn-row{display:flex;gap:8px;}.btn-row .btn{flex:1;}
+.btn-sm{padding:.55rem .9rem;font-size:.82rem;width:auto;}
 
-/* ── BUTTONS ── */
-.btn {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-weight: 500;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
-}
-.btn:hover:not(:disabled) {
-  border-color: var(--border-hover);
-  background: rgba(212,168,67,0.08);
-}
-.btn:active:not(:disabled) { transform: scale(0.97); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+/* ROOM CODE */
+.room-code-box{text-align:center;padding:1.5rem;background:var(--bg-surface);border:1px solid var(--border-2);border-radius:var(--r-md);margin-bottom:.75rem;position:relative;}
+.room-code-box::before{content:'◆';position:absolute;top:50%;left:12px;transform:translateY(-50%);font-size:.6rem;color:var(--gold-dim);}
+.room-code-box::after{content:'◆';position:absolute;top:50%;right:12px;transform:translateY(-50%);font-size:.6rem;color:var(--gold-dim);}
+.room-code-num{font-family:'Cinzel Decorative',serif;font-size:4rem;font-weight:900;background:linear-gradient(160deg,#f2cc6b,#dba832,#f2cc6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px var(--gold-glow));line-height:1;}
+.room-code-hint{font-size:.75rem;color:var(--text-2);margin-top:8px;}
 
-.btn-gold {
-  background: linear-gradient(135deg, #b8860b, #d4a843, #b8860b);
-  border-color: var(--gold);
-  color: #0f0a1e;
-  font-weight: 700;
-  font-family: 'Cinzel', serif;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 20px rgba(212,168,67,0.3);
-}
-.btn-gold:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d4a843, #f0c96a, #d4a843);
-  box-shadow: 0 4px 30px rgba(212,168,67,0.5);
-}
+/* PLAYERS */
+.players-list{display:flex;flex-direction:column;gap:7px;}
+.player-chip{display:flex;align-items:center;gap:10px;padding:.65rem 1rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-sm);transition:border-color .2s;}
+.player-chip.online{border-color:rgba(45,212,191,.35);}
+.player-dot{width:8px;height:8px;border-radius:50%;background:var(--teal-lt);box-shadow:0 0 8px var(--teal-lt);flex-shrink:0;}
+.player-name{color:var(--text);font-weight:500;font-size:.95rem;}
+.badge-host{margin-left:auto;font-family:'Cinzel',serif;font-size:.6rem;color:var(--gold-dim);background:rgba(219,168,50,.1);border:1px solid rgba(219,168,50,.25);padding:2px 9px;border-radius:99px;}
+.badge-me{font-size:.65rem;color:var(--text-3);margin-left:auto;}
 
-.btn-crimson {
-  background: rgba(192,57,43,0.2);
-  border-color: rgba(192,57,43,0.5);
-  color: #e88;
-}
-.btn-crimson:hover:not(:disabled) {
-  background: rgba(192,57,43,0.35);
-}
+/* GAME TOP */
+.game-top{display:flex;gap:6px;margin-bottom:.75rem;padding-top:.8rem;}
+.stat-chip{flex:1;text-align:center;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r-sm);padding:.5rem .4rem;}
+.stat-chip .sl{font-size:.6rem;color:var(--text-3);display:block;letter-spacing:.1em;text-transform:uppercase;}
+.stat-chip .sv{font-size:1rem;font-weight:600;color:var(--text);display:block;margin-top:2px;}
+.stat-chip.gc{border-color:rgba(219,168,50,.3);}
+.stat-chip.gc .sv{color:var(--gold);font-family:'Cinzel',serif;font-size:1.2rem;}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--teal-lt);box-shadow:0 0 6px var(--teal-lt);animation:liveblink 2s ease-in-out infinite;}
+@keyframes liveblink{0%,100%{opacity:1}50%{opacity:.3}}
 
-.btn-row { display: flex; gap: 8px; }
-.btn-row .btn { flex: 1; }
-.btn-sm { padding: 0.6rem 1rem; font-size: 0.85rem; width: auto; }
+/* KINGS */
+.kings-panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r-lg);padding:.9rem 1rem;margin-bottom:.75rem;position:relative;overflow:hidden;}
+.kings-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-2),transparent);}
+.kings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
+.kings-title{font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold-dim);letter-spacing:.15em;text-transform:uppercase;}
+.kings-count{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);}
+.kings-row{display:flex;justify-content:center;gap:10px;}
+.king-slot{width:52px;height:52px;border-radius:12px;border:2px dashed var(--text-3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--text-3);transition:all .45s cubic-bezier(.34,1.56,.64,1);}
+.king-slot.filled{border:2px solid var(--gold-dim);background:radial-gradient(circle at 30% 30%,rgba(219,168,50,.18),rgba(219,168,50,.05));color:var(--gold);box-shadow:0 0 14px rgba(219,168,50,.2);}
+.king-slot.danger{border:2px solid var(--red-lt);background:radial-gradient(circle at 30% 30%,rgba(239,68,68,.25),rgba(160,21,21,.1));color:var(--red-lt);animation:king-danger .65s ease-in-out infinite;}
+@keyframes king-danger{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{transform:scale(1.12);box-shadow:0 0 20px 4px rgba(239,68,68,.4)}}
 
-/* ── DIVIDER ── */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  margin: 0.25rem 0;
-  letter-spacing: 0.1em;
-}
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
+/* TURN */
+.turn-banner{border-radius:var(--r-sm);padding:.7rem 1rem;text-align:center;font-size:.9rem;margin-bottom:.75rem;font-weight:500;}
+.my-turn{background:linear-gradient(135deg,rgba(219,168,50,.12),rgba(219,168,50,.06));border:1px solid rgba(219,168,50,.45);color:var(--gold-lt);animation:turn-glow 2.5s ease-in-out infinite;}
+@keyframes turn-glow{0%,100%{box-shadow:0 0 0 0 rgba(219,168,50,0)}50%{box-shadow:0 0 24px 0 rgba(219,168,50,.22)}}
+.others-turn{background:var(--bg-surface);border:1px solid var(--border);color:var(--text-2);}
+.turn-name{color:var(--text);font-weight:700;}
 
-/* ── ROOM CODE ── */
-.room-code-box {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  text-align: center;
-  margin-bottom: 0.75rem;
-}
-.room-code-big {
-  font-family: 'Cinzel', serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 0.2em;
-  text-shadow: 0 0 20px rgba(212,168,67,0.5);
-}
-.room-code-hint {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-top: 6px;
-}
+/* CARD + RULE ROW */
+.card-rule-row{display:flex;gap:12px;margin-bottom:.75rem;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;min-height:200px;align-items:center;position:relative;overflow:hidden;}
+.card-rule-row::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--border-2),transparent);}
+.card-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.playing-card{width:100px;height:142px;border-radius:12px;background:#f9f3e4;border:2px solid rgba(219,168,50,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 10px 40px rgba(0,0,0,.6),0 2px 8px rgba(219,168,50,.15);animation:card-reveal .55s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.playing-card::before{content:'';position:absolute;inset:4px;border:1px solid rgba(0,0,0,.08);border-radius:8px;pointer-events:none;}
+@keyframes card-reveal{0%{transform:rotateY(90deg) scale(.7);opacity:0}60%{transform:rotateY(-8deg) scale(1.05)}100%{transform:rotateY(0) scale(1);opacity:1}}
+.c-rank{font-size:2.4rem;font-weight:800;line-height:1;}
+.c-suit{font-size:2rem;line-height:1;}
+.c-red{color:#be1212;}
+.c-black{color:#110e24;}
+.card-back{width:100px;height:142px;border-radius:12px;background:linear-gradient(145deg,#150d30,#0e0a20,#1c1440);border:2px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:2.8rem;box-shadow:0 10px 40px rgba(0,0,0,.6);position:relative;overflow:hidden;}
+.card-back::before{content:'';position:absolute;inset:6px;border:1px solid rgba(219,168,50,.2);border-radius:7px;}
+.card-back::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 35% 35%,rgba(219,168,50,.07),transparent 60%);}
+.card-by{font-size:.72rem;color:var(--text-2);margin-top:8px;text-align:center;}
+.card-by strong{color:var(--text);}
 
-/* ── PLAYER LIST ── */
-.players-list { display: flex; flex-direction: column; gap: 6px; }
-.player-chip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0.6rem 0.9rem;
-  background: var(--bg-surface);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
-}
-.player-chip.online { border-color: rgba(46,213,115,0.3); }
-.player-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: #2ed573;
-  box-shadow: 0 0 6px #2ed573;
-  flex-shrink: 0;
-}
-.player-name-text { color: var(--text-primary); font-weight: 500; }
-.host-badge {
-  margin-left: auto;
-  font-size: 0.65rem;
-  color: var(--gold-dim);
-  background: rgba(212,168,67,0.1);
-  border: 1px solid rgba(212,168,67,0.2);
-  padding: 2px 8px;
-  border-radius: 99px;
-  font-family: 'Cinzel', serif;
-}
-.me-badge {
-  font-size: 0.65rem;
-  color: var(--text-dim);
-}
+.rule-col{flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+.rule-no-card{color:var(--text-3);font-size:.82rem;text-align:center;line-height:1.7;}
+.rule-badge-rank{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;background:linear-gradient(135deg,rgba(219,168,50,.2),rgba(219,168,50,.08));border:1px solid rgba(219,168,50,.4);border-radius:8px;font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.rule-card-name{font-family:'Cinzel',serif;font-size:.68rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase;}
+.rule-divider{width:30px;height:1px;background:linear-gradient(90deg,var(--gold-dim),transparent);margin:5px 0;}
+.rule-desc{font-size:.88rem;color:var(--text);line-height:1.65;word-break:keep-all;}
 
-/* ── GAME STATUS BAR ── */
-.status-bar {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 0.75rem;
-}
-.status-pill {
-  flex: 1;
-  text-align: center;
-  padding: 0.5rem 0.75rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-.status-pill strong {
-  display: block;
-  font-size: 1.1rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
+/* DRAW BUTTON */
+#btn-draw{padding:1rem;font-size:1.05rem;font-family:'Cinzel',serif;letter-spacing:.1em;font-weight:700;margin-bottom:.75rem;}
 
-/* ── KINGS TRACKER ── */
-.kings-panel {
-  text-align: center;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
-.kings-row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 0.5rem 0;
-}
-.king-slot {
-  width: 48px; height: 48px;
-  border-radius: 10px;
-  border: 1.5px dashed var(--text-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  color: var(--text-dim);
-  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-.king-slot.filled {
-  border-style: solid;
-  border-color: var(--gold-dim);
-  background: rgba(212,168,67,0.1);
-  color: var(--gold);
-  transform: scale(1.05);
-}
-.king-slot.danger {
-  border-color: var(--crimson);
-  background: rgba(192,57,43,0.2);
-  color: var(--crimson-light);
-  animation: king-pulse 0.7s ease-in-out infinite;
-}
-@keyframes king-pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(192,57,43,0); }
-  50%       { transform: scale(1.1); box-shadow: 0 0 16px 4px rgba(192,57,43,0.4); }
-}
-.kings-count-text {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
+/* QUICK RULES GRID */
+.rules-quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:.75rem;}
+.rq-cell{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:6px 4px;text-align:center;transition:border-color .2s,background .2s;}
+.rq-cell.active-rank{border-color:var(--gold);background:rgba(219,168,50,.1);box-shadow:0 0 10px rgba(219,168,50,.2);}
+.rq-rank{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;color:var(--gold);display:block;}
+.rq-short{font-size:.56rem;color:var(--text-2);display:block;margin-top:1px;line-height:1.3;}
 
-/* ── TURN BANNER ── */
-.turn-banner {
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 1rem;
-  text-align: center;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-.my-turn {
-  background: rgba(212,168,67,0.12);
-  border: 1px solid rgba(212,168,67,0.4);
-  color: var(--gold-light);
-  animation: shimmer 2s ease-in-out infinite;
-}
-@keyframes shimmer {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,67,0); }
-  50%       { box-shadow: 0 0 20px 0 rgba(212,168,67,0.2); }
-}
-.others-turn {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-}
-.turn-name { color: var(--text-primary); font-weight: 700; }
+/* LOG */
+.game-log{max-height:90px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.log-e{font-size:.76rem;color:var(--text-2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);line-height:1.4;}
+.log-e:last-child{border-bottom:none;}
+.log-t{color:var(--text-3);margin-right:5px;font-family:'Cinzel',serif;font-size:.68rem;}
+.log-gold{color:var(--gold);}
+.log-red{color:var(--red-lt);font-weight:500;}
 
-/* ── CARD AREA ── */
-.card-area {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.75rem;
-  text-align: center;
-  margin-bottom: 0.75rem;
-  min-height: 230px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px);}
+.overlay.hidden{display:none;}
+.ov-box{background:var(--bg-card);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:2rem 1.5rem;text-align:center;max-width:350px;width:100%;position:relative;overflow:hidden;animation:ov-in .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes ov-in{from{transform:scale(.75) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.ov-box::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border-2),transparent);}
+.ov-icon{font-size:3.8rem;display:block;margin-bottom:.6rem;}
+.ov-title{font-family:'Cinzel',serif;font-size:1.25rem;font-weight:700;color:var(--gold);margin-bottom:.6rem;letter-spacing:.05em;}
+.ov-msg{font-size:.88rem;color:var(--text-2);margin-bottom:1.25rem;line-height:1.7;}
+.ov-box.wide{max-width:400px;max-height:88vh;overflow-y:auto;text-align:left;}
+.rule-ov-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.rule-ov-item:last-child{border-bottom:none;}
+.rule-ov-rank{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);min-width:28px;text-align:center;flex-shrink:0;}
+.rule-ov-desc{color:var(--text-2);line-height:1.5;flex:1;}
 
-.playing-card {
-  width: 108px;
-  height: 150px;
-  border-radius: 10px;
-  border: 2px solid rgba(255,255,255,0.15);
-  background: #fdf6e3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
-  animation: cardReveal 0.5s cubic-bezier(0.34,1.56,0.64,1);
-}
-@keyframes cardReveal {
-  from { transform: rotateY(90deg) scale(0.8); opacity: 0; }
-  to   { transform: rotateY(0) scale(1); opacity: 1; }
-}
-.card-rank { font-size: 2.2rem; font-weight: 700; line-height: 1; }
-.card-suit { font-size: 2rem; line-height: 1; }
-.card-red  { color: #c0392b; }
-.card-black{ color: #1a1a2e; }
-
-.card-back {
-  width: 108px; height: 150px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #1a0a2e, #2d1650);
-  border: 2px solid var(--gold-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  position: relative;
-  overflow: hidden;
-}
-.card-back::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px solid rgba(212,168,67,0.3);
-  border-radius: 6px;
-}
-
-.card-who-info {
-  margin-top: 16px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-.card-who-info strong { color: var(--text-primary); }
-
-/* ── RULE DISPLAY ── */
-.rule-display {
-  background: var(--bg-surface);
-  border: 1px solid rgba(212,168,67,0.25);
-  border-radius: var(--radius-md);
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  display: none;
-}
-.rule-rank-badge {
-  display: inline-block;
-  font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
-  color: var(--gold);
-  font-weight: 700;
-  margin-right: 10px;
-  min-width: 28px;
-  text-align: center;
-}
-.rule-text-content {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-/* ── GAME LOG ── */
-.game-log {
-  max-height: 110px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-.log-entry {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  line-height: 1.4;
-}
-.log-entry:last-child { border-bottom: none; }
-.log-time {
-  color: var(--text-dim);
-  margin-right: 6px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
-}
-.log-king { color: var(--gold); }
-.log-gameover { color: var(--crimson-light); font-weight: 500; }
-
-/* ── OVERLAYS ── */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 1.5rem;
-  backdrop-filter: blur(4px);
-}
-.overlay.hidden { display: none; }
-
-.overlay-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 2rem 1.5rem;
-  text-align: center;
-  max-width: 340px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  animation: overlayIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-@keyframes overlayIn {
-  from { transform: scale(0.8) translateY(20px); opacity: 0; }
-  to   { transform: scale(1) translateY(0); opacity: 1; }
-}
-.overlay-box::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212,168,67,0.6), transparent);
-}
-
-.overlay-icon { font-size: 3.5rem; display: block; margin-bottom: 0.75rem; }
-.overlay-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--gold);
-  margin-bottom: 0.75rem;
-  letter-spacing: 0.05em;
-}
-.overlay-msg {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.25rem;
-  line-height: 1.7;
-}
-
-/* ── LOADING SPINNER ── */
-.spinner {
-  display: inline-block;
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.error-msg {
-  font-size: 0.8rem;
-  color: #e88;
-  min-height: 20px;
-  padding-top: 4px;
-}
-
-/* ── WAITING MESSAGE ── */
-.waiting-msg {
-  text-align: center;
-  padding: 1rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-/* ── FIREBASE CONFIG NOTICE ── */
-.config-notice {
-  background: rgba(212,168,67,0.08);
-  border: 1px solid rgba(212,168,67,0.3);
-  border-radius: var(--radius-md);
-  padding: 1rem;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 0.75rem;
-}
-.config-notice code {
-  background: rgba(0,0,0,0.4);
-  padding: 1px 5px;
-  border-radius: 4px;
-  color: var(--gold-light);
-  font-size: 0.8rem;
-}
-
-/* ── RULES LIST ── */
-.rules-list { text-align: left; }
-.rule-item {
-  display: flex;
-  gap: 12px;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.85rem;
-  align-items: flex-start;
-}
-.rule-item:last-child { border-bottom: none; }
-.rule-item-rank {
-  font-family: 'Cinzel', serif;
-  font-weight: 600;
-  color: var(--gold);
-  min-width: 24px;
-  text-align: right;
-  flex-shrink: 0;
-}
-.rule-item-desc { color: var(--text-secondary); line-height: 1.5; }
-
-/* realtime indicator */
-.realtime-dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: #2ed573;
-  box-shadow: 0 0 6px #2ed573;
-  margin-right: 5px;
-  animation: blink 2s ease-in-out infinite;
-}
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* MISC */
+.spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{font-size:.78rem;color:#fca5a5;min-height:18px;padding-top:3px;}
+.waiting-msg{text-align:center;padding:1rem;color:var(--text-2);font-size:.88rem;}
+.config-notice{background:rgba(219,168,50,.06);border:1px solid rgba(219,168,50,.25);border-radius:var(--r-md);padding:.9rem;font-size:.8rem;color:var(--text-2);line-height:1.6;margin-bottom:.8rem;}
+.config-notice code{background:rgba(0,0,0,.4);padding:1px 5px;border-radius:4px;color:var(--gold-lt);font-size:.78rem;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ═══════════════════════════════ LOBBY ═══════════════════════════════ -->
-  <div id="screen-lobby" class="screen active">
-    <div class="game-header">
-      <span class="crown-glyph">👑</span>
-      <div class="game-title">왕의 성배</div>
-      <div class="game-subtitle">실시간 멀티플레이어</div>
-    </div>
-
-    <!-- Firebase 설정 안내 (초기에만 표시) -->
-    <div class="config-notice" id="firebase-notice">
-      🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong><br>
-      하단 스크립트의 <code>firebaseConfig</code>를 본인의 Firebase 프로젝트로 교체하세요.<br>
-      <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold-light)">console.firebase.google.com</a>에서 무료로 생성 가능합니다.
-    </div>
-
-    <div class="panel">
-      <div class="panel-label">닉네임</div>
-      <input type="text" id="input-name" placeholder="내 이름 입력..." maxlength="12" autocomplete="off" />
-      <div id="name-error" class="error-msg"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-label">새 방 만들기</div>
-      <button class="btn btn-gold" onclick="createRoom()">✦ 새 게임 시작</button>
-    </div>
-
-    <div class="divider">또는</div>
-
-    <div class="panel">
-      <div class="panel-label">방 코드로 입장</div>
-      <input type="text" id="input-room" placeholder="방 코드 2자리..." maxlength="2"
-             style="letter-spacing:0.2em; font-family:'Cinzel',serif; font-size:1.8rem; text-align:center;"
-             autocomplete="off" inputmode="numeric" />
-      <button class="btn" style="margin-top:6px;" onclick="joinRoom()">입장하기 →</button>
-      <div id="join-error" class="error-msg"></div>
-    </div>
+<!-- LOBBY -->
+<div id="screen-lobby" class="screen active">
+  <div class="game-header">
+    <div class="crown-wrap"><span class="crown-icon">👑</span></div>
+    <div class="game-title">왕의 성배</div>
+    <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.0.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
-
-  <!-- ═══════════════════════════════ WAITING ROOM ══════════════════════════ -->
-  <div id="screen-waiting" class="screen">
-    <div class="game-header" style="padding-top:1.5rem;">
-      <span class="crown-glyph" style="font-size:2rem;">🏰</span>
-      <div class="game-title" style="font-size:1.5rem;">대기실</div>
-      <div class="game-subtitle">
-        <span class="realtime-dot"></span>실시간 연결 중
-      </div>
-    </div>
-
-    <div class="room-code-box">
-      <div class="room-code-big" id="display-room-code">----</div>
-      <div class="room-code-hint">친구들에게 이 코드를 알려주세요</div>
-    </div>
-
-    <button class="btn btn-sm" onclick="copyRoomCode()" style="margin-bottom:0.75rem;">
-      📋 코드 복사
-    </button>
-
-    <div class="panel">
-      <div class="panel-label">접속한 플레이어 <span id="player-count-waiting">(0명)</span></div>
-      <div class="players-list" id="players-list-waiting"></div>
-    </div>
-
-    <div id="host-controls" style="display:none;">
-      <button class="btn btn-gold" id="btn-start" onclick="startGame()" disabled>
-        게임 시작 (최소 2명 필요)
-      </button>
-    </div>
-    <div id="guest-waiting-msg" class="waiting-msg" style="display:none;">
-      <span class="spinner"></span>방장이 게임을 시작하길 기다리는 중...
-    </div>
+  <div class="config-notice" id="firebase-notice">
+    🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
+    <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gold-lt)">console.firebase.google.com</a>
   </div>
-
-  <!-- ═══════════════════════════════ GAME ════════════════════════════════ -->
-  <div id="screen-game" class="screen">
-
-    <div style="padding-top:1rem;"></div>
-
-    <div class="status-bar">
-      <div class="status-pill">
-        남은 카드
-        <strong id="cards-remaining">52</strong>
-      </div>
-      <div class="status-pill">
-        방 코드
-        <strong id="game-room-code" style="font-family:'Cinzel',serif; color:var(--gold);">----</strong>
-      </div>
-      <div class="status-pill">
-        <span class="realtime-dot"></span>
-        <strong style="font-size:0.7rem; color:var(--text-secondary);">실시간</strong>
-      </div>
-    </div>
-
-    <!-- Kings tracker -->
-    <div class="kings-panel">
-      <div class="panel-label" style="margin-bottom:6px;">성배에 모인 왕</div>
-      <div class="kings-row" id="kings-tracker">
-        <div class="king-slot" id="king-0">♔</div>
-        <div class="king-slot" id="king-1">♔</div>
-        <div class="king-slot" id="king-2">♔</div>
-        <div class="king-slot" id="king-3">♔</div>
-      </div>
-      <div class="kings-count-text" id="kings-count-text">0 / 4</div>
-    </div>
-
-    <!-- Turn -->
-    <div id="my-turn-banner" class="turn-banner my-turn" style="display:none;">
-      ✨ 내 차례입니다! 카드를 뽑으세요
-    </div>
-    <div id="others-turn-banner" class="turn-banner others-turn" style="display:none;">
-      <span class="turn-name" id="current-turn-name"></span>의 차례...
-    </div>
-
-    <!-- Card display -->
-    <div class="card-area" id="card-area">
-      <div id="card-display">
-        <div class="card-back">👑</div>
-      </div>
-      <div class="card-who-info" id="card-who-info"></div>
-    </div>
-
-    <button class="btn btn-gold" id="btn-draw" onclick="drawCard()" style="margin-bottom:0.75rem;" disabled>
-      카드 뽑기
-    </button>
-
-    <!-- Rule -->
-    <div class="rule-display" id="rule-display">
-      <span class="rule-rank-badge" id="rule-rank"></span>
-      <span class="rule-text-content" id="rule-text"></span>
-    </div>
-
-    <!-- Log -->
-    <div class="panel">
-      <div class="panel-label">게임 기록</div>
-      <div class="game-log" id="game-log">
-        <div class="log-entry"><span class="log-time">—</span>게임을 기다리는 중...</div>
-      </div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-sm" onclick="viewRules()">📜 규칙</button>
-      <button class="btn btn-sm" onclick="leaveGame()">← 나가기</button>
-      <button class="btn btn-sm btn-crimson" onclick="confirmNewGame()">새 게임</button>
-    </div>
-    <div style="height:1rem;"></div>
+  <div class="panel">
+    <div class="panel-label">✦ 이름</div>
+    <input type="text" id="input-name" placeholder="내 이름을 입력..." maxlength="12" autocomplete="off"/>
+    <div id="name-error" class="err"></div>
   </div>
-
-</div><!-- #app -->
-
-<!-- ════════════════════════ OVERLAYS ════════════════════════ -->
-
-<div class="overlay hidden" id="overlay-king">
-  <div class="overlay-box">
-    <span class="overlay-icon" id="king-overlay-icon">⚠️</span>
-    <div class="overlay-title" id="king-overlay-title">왕이 나타났습니다!</div>
-    <div class="overlay-msg" id="king-overlay-msg"></div>
-    <button class="btn btn-gold" onclick="closeOverlay('overlay-king')">확인</button>
+  <div class="panel">
+    <div class="panel-label">✦ 새 게임</div>
+    <button class="btn btn-gold" onclick="createRoom()">⚔ &nbsp; 새 게임 시작</button>
+  </div>
+  <div class="ornament">✦ 또는 ✦</div>
+  <div class="panel">
+    <div class="panel-label">✦ 방 코드로 입장</div>
+    <input type="text" id="input-room" placeholder="00" maxlength="2"
+      style="font-family:'Cinzel Decorative',serif;font-size:2.2rem;text-align:center;letter-spacing:.2em;padding:1rem;"
+      autocomplete="off" inputmode="numeric"/>
+    <button class="btn" onclick="joinRoom()" style="margin-top:4px;">입장하기 →</button>
+    <div id="join-error" class="err"></div>
   </div>
 </div>
 
-<div class="overlay hidden" id="overlay-gameover">
-  <div class="overlay-box">
-    <span class="overlay-icon">💀</span>
-    <div class="overlay-title">저주의 성배 완성!</div>
-    <div class="overlay-msg" id="gameover-msg"></div>
-    <button class="btn btn-gold" onclick="startNewGame()" style="margin-bottom:8px;">
-      새 게임 시작
-    </button>
-    <button class="btn" onclick="closeOverlay('overlay-gameover')">계속 보기</button>
+<!-- WAITING -->
+<div id="screen-waiting" class="screen">
+  <div class="game-header" style="padding-top:1.5rem;">
+    <span class="crown-icon" style="font-size:2.5rem;">🏰</span>
+    <div class="game-title" style="font-size:1.35rem;">대기실</div>
+    <div class="game-subtitle"><span class="live-dot"></span> &nbsp; 실시간 연결 중</div>
+  </div>
+  <div class="room-code-box">
+    <div class="room-code-num" id="display-room-code">--</div>
+    <div class="room-code-hint">친구들에게 이 번호를 알려주세요</div>
+  </div>
+  <button class="btn btn-sm" onclick="copyRoomCode()" style="margin-bottom:.75rem;align-self:center;">📋 &nbsp; 코드 복사</button>
+  <div class="panel">
+    <div class="panel-label">✦ 접속한 플레이어 &nbsp;<span id="player-count">(0명)</span></div>
+    <div class="players-list" id="players-list"></div>
+  </div>
+  <div id="host-controls" style="display:none;">
+    <button class="btn btn-gold" id="btn-start" onclick="startGame()" disabled>게임 시작</button>
+  </div>
+  <div id="guest-wait" class="waiting-msg" style="display:none;">
+    <span class="spinner"></span>방장이 게임을 시작하길 기다리는 중...
   </div>
 </div>
 
-<div class="overlay hidden" id="overlay-rules">
-  <div class="overlay-box" style="max-height:85vh; overflow-y:auto; max-width:380px;">
-    <div class="overlay-title">📜 게임 규칙</div>
-    <div style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 12px;" id="rules-edit-hint">방장은 규칙을 직접 수정할 수 있어요</div>
-    <div class="rules-list" id="rules-content" style="margin:0.5rem 0;"></div>
-    <div id="rules-save-btn" style="display:none; margin-top:12px;">
-      <button class="btn btn-gold" style="margin-bottom:6px;" onclick="saveRules()">💾 규칙 저장</button>
-      <button class="btn" style="margin-bottom:6px;" onclick="resetRules()">↺ 기본값으로</button>
+<!-- GAME -->
+<div id="screen-game" class="screen">
+  <div class="game-top">
+    <div class="stat-chip">
+      <span class="sl">남은 카드</span><span class="sv" id="cards-left">52</span>
     </div>
-    <button class="btn" style="margin-top:6px;" onclick="closeOverlay('overlay-rules')">닫기</button>
+    <div class="stat-chip gc">
+      <span class="sl">방 코드</span><span class="sv" id="room-code-top">--</span>
+    </div>
+    <div class="stat-chip">
+      <span class="sl"><span class="live-dot"></span> 실시간</span>
+      <span class="sv" id="player-count-game" style="font-size:.8rem;color:var(--text-2);">0명</span>
+    </div>
+  </div>
+
+  <div class="kings-panel">
+    <div class="kings-header">
+      <span class="kings-title">✦ &nbsp; 성배에 모인 왕</span>
+      <span class="kings-count" id="kings-count-txt">0 / 4</span>
+    </div>
+    <div class="kings-row">
+      <div class="king-slot" id="king-0">♔</div>
+      <div class="king-slot" id="king-1">♔</div>
+      <div class="king-slot" id="king-2">♔</div>
+      <div class="king-slot" id="king-3">♔</div>
+    </div>
+  </div>
+
+  <div id="my-turn-banner" class="turn-banner my-turn" style="display:none;">✨ &nbsp; 내 차례입니다! &nbsp; 카드를 뽑으세요</div>
+  <div id="others-banner" class="turn-banner others-turn" style="display:none;"><span class="turn-name" id="turn-name-txt"></span>의 차례...</div>
+
+  <div class="card-rule-row">
+    <div class="card-col">
+      <div id="card-display"><div class="card-back">👑</div></div>
+      <div class="card-by" id="card-by"></div>
+    </div>
+    <div class="rule-col" id="rule-col">
+      <div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>
+    </div>
+  </div>
+
+  <div class="rules-quick-grid" id="rules-grid"></div>
+
+  <button class="btn btn-gold" id="btn-draw" onclick="drawCard()" disabled>카드 뽑기</button>
+
+  <div class="panel">
+    <div class="panel-label">✦ 게임 기록</div>
+    <div class="game-log" id="game-log"><div class="log-e"><span class="log-t">—</span>게임을 기다리는 중...</div></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-sm btn-purple" onclick="viewRules()">📜 규칙 편집</button>
+    <button class="btn btn-sm" onclick="leaveGame()">← 나가기</button>
+    <button class="btn btn-sm btn-red" onclick="confirmNewGame()">새 게임</button>
+  </div>
+  <div style="height:1rem;"></div>
+</div>
+</div>
+
+<!-- OVERLAYS -->
+<div class="overlay hidden" id="ov-king">
+  <div class="ov-box">
+    <span class="ov-icon" id="king-ov-icon">👑</span>
+    <div class="ov-title" id="king-ov-title">왕 등장!</div>
+    <div class="ov-msg" id="king-ov-msg"></div>
+    <button class="btn btn-gold" onclick="closeOverlay('ov-king')">확인</button>
+  </div>
+</div>
+<div class="overlay hidden" id="ov-gameover">
+  <div class="ov-box">
+    <span class="ov-icon">💀</span>
+    <div class="ov-title">저주의 성배 완성!</div>
+    <div class="ov-msg" id="gameover-msg"></div>
+    <button class="btn btn-gold" onclick="startNewGame()" style="margin-bottom:8px;">새 게임 시작</button>
+    <button class="btn" onclick="closeOverlay('ov-gameover')">계속 보기</button>
+  </div>
+</div>
+<div class="overlay hidden" id="ov-rules">
+  <div class="ov-box wide">
+    <div class="ov-title" style="text-align:center;margin-bottom:4px;">📜 게임 규칙</div>
+    <div style="font-size:.72rem;color:var(--text-3);text-align:center;margin-bottom:12px;" id="rules-edit-hint">방장은 규칙을 수정할 수 있습니다</div>
+    <div id="rules-ov-content"></div>
+    <div id="rules-save-area" style="display:none;margin-top:12px;">
+      <button class="btn btn-gold" onclick="saveRules()" style="margin-bottom:6px;">💾 저장</button>
+      <button class="btn" onclick="resetRules()" style="margin-bottom:6px;">↺ 기본값으로</button>
+    </div>
+    <button class="btn" style="margin-top:8px;" onclick="closeOverlay('ov-rules')">닫기</button>
+  </div>
+</div>
+<div class="overlay hidden" id="ov-loading">
+  <div class="ov-box" style="padding:2rem;">
+    <span class="spinner" style="width:38px;height:38px;border-width:3px;"></span>
+    <div style="margin-top:1rem;color:var(--text-2);font-size:.9rem;" id="loading-msg">처리 중...</div>
   </div>
 </div>
 
-<div class="overlay hidden" id="overlay-loading">
-  <div class="overlay-box" style="padding:2rem;">
-    <span class="spinner" style="width:36px;height:36px;border-width:3px;"></span>
-    <div style="margin-top:1rem; color:var(--text-secondary); font-size:0.9rem;" id="loading-msg">처리 중...</div>
-  </div>
-</div>
-
-
-<!-- ════════════════════════ SCRIPTS ════════════════════════ -->
 <script type="module">
-import { initializeApp }                    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, update, onValue, off }
-                                             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, update, onValue, off } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  FIREBASE CONFIG — 본인 프로젝트 설정으로 교체하세요          ║
-// ║  https://console.firebase.google.com 에서 생성              ║
-// ╚══════════════════════════════════════════════════════════════╝
 const firebaseConfig = {
-  apiKey:            "AIzaSyBK1bCsbGkUKiUTj8SM257dUYXdK1cA87Q",
-  authDomain:        "king-s-cup-26cde.firebaseapp.com",
-  databaseURL:       "https://king-s-cup-26cde-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:         "king-s-cup-26cde",
-  storageBucket:     "king-s-cup-26cde.firebasestorage.app",
-  messagingSenderId: "205604723914",
-  appId:             "1:205604723914:web:10948d2ec27b428e6b2833",
-  measurementId:     "G-LL0VGP7ZWW"
+  apiKey:"AIzaSyBK1bCsbGkUKiUTj8SM257dUYXdK1cA87Q",
+  authDomain:"king-s-cup-26cde.firebaseapp.com",
+  databaseURL:"https://king-s-cup-26cde-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"king-s-cup-26cde",
+  storageBucket:"king-s-cup-26cde.firebasestorage.app",
+  messagingSenderId:"205604723914",
+  appId:"1:205604723914:web:10948d2ec27b428e6b2833"
 };
-
-// ─── 초기화 ───────────────────────────────────────────────────
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-// ─── 게임 데이터 ──────────────────────────────────────────────
-const SUITS = ['♠','♥','♦','♣'];
-const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-const DEFAULT_RULES = {
-  'A':  '폭포수 — 모두 마셔라! 순서대로 멈출 수 있음',
-  '2':  '나 — 나 자신에게 지목',
-  '3':  '너 — 다른 사람 지목',
-  '4':  '바닥 — 가장 늦게 손 올린 사람이 마심',
-  '5':  '남자들 — 남성 플레이어 모두 마심',
-  '6':  '여자들 — 여성 플레이어 모두 마심',
-  '7':  '천국 — 가장 늦게 손 든 사람이 마심',
-  '8':  '짝 — 짝을 정해 함께 마심',
-  '9':  '운율 — 단어 운율 맞추기 게임',
-  '10': '카테고리 — 카테고리 말하기 게임',
-  'J':  '규칙 — 새 규칙 만들기',
-  'Q':  '질문 — 질문으로만 대화하기',
-  'K':  '👑 왕 — 성배에 한 잔 추가! 네 번째 왕을 뽑으면 성배를 마셔야 함'
+const SUITS=['♠','♥','♦','♣'], RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const RANK_NAMES={'A':'에이스','2':'투','3':'쓰리','4':'포','5':'파이브','6':'식스','7':'세븐','8':'에이트','9':'나인','10':'텐','J':'잭','Q':'퀸','K':'킹'};
+const SHORT={'A':'폭포수','2':'나','3':'너','4':'바닥','5':'남자들','6':'여자들','7':'천국','8':'짝','9':'운율','10':'카테고리','J':'규칙','Q':'질문','K':'👑왕'};
+const DR={
+  'A':'폭포수 — 모두 마셔라! 순서대로 멈출 수 있음',
+  '2':'나 — 나 자신에게 지목',
+  '3':'너 — 다른 사람 지목',
+  '4':'바닥 — 가장 늦게 손 올린 사람이 마심',
+  '5':'남자들 — 남성 플레이어 모두 마심',
+  '6':'여자들 — 여성 플레이어 모두 마심',
+  '7':'천국 — 가장 늦게 손 든 사람이 마심',
+  '8':'짝 — 짝을 정해 함께 마심',
+  '9':'운율 — 단어 운율 맞추기 게임',
+  '10':'카테고리 — 카테고리 말하기 게임',
+  'J':'규칙 — 새 규칙을 만들어 모두에게 적용',
+  'Q':'질문 — 질문으로만 대화하기',
+  'K':'👑 왕 — 성배에 한 잔 추가! 네 번째 왕을 뽑으면 성배를 마셔야 함'
 };
 
-// ─── 앱 상태 ──────────────────────────────────────────────────
-const G = {
-  myName:    '',
-  roomCode:  '',
-  isHost:    false,
-  unsubscribe: null,   // Firebase listener unsubscribe fn
-  gameOverShown: false,
-};
+const G={myName:'',roomCode:'',isHost:false,unsub:null,gameOverShown:false};
+const genCode=()=>String(Math.floor(Math.random()*90)+10);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const makeDeck=()=>{let d=[];for(const s of SUITS)for(const r of RANKS)d.push({r,s});return shuffle(d);};
+const isRed=s=>s==='♥'||s==='♦';
+const fmtTime=ts=>{const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');};
+const rRef=c=>ref(db,'rooms/'+c);
 
-// ─── 유틸 ─────────────────────────────────────────────────────
-function genCode() {
-  return String(Math.floor(Math.random() * 90) + 10);
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
+function showLoading(m){document.getElementById('loading-msg').textContent=m||'처리 중...';document.getElementById('ov-loading').classList.remove('hidden');}
+function hideLoading(){document.getElementById('ov-loading').classList.add('hidden');}
+function showOverlay(id){document.getElementById(id).classList.remove('hidden');}
+function closeOverlay(id){document.getElementById(id).classList.add('hidden');}
+function showErr(id,m){const el=document.getElementById(id);el.textContent=m;setTimeout(()=>el.textContent='',3000);}
+
+function renderGrid(rules,active){
+  document.getElementById('rules-grid').innerHTML=RANKS.map(r=>`
+    <div class="rq-cell ${r===active?'active-rank':''}">
+      <span class="rq-rank">${r}</span>
+      <span class="rq-short">${SHORT[r]||''}</span>
+    </div>`).join('');
 }
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length-1; i > 0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function makeDeck() {
-  let d = [];
-  for (const s of SUITS) for (const r of RANKS) d.push({r,s});
-  return shuffle(d);
-}
-
-function cardColor(suit) {
-  return (suit === '♥' || suit === '♦') ? 'card-red' : 'card-black';
-}
-
-function fmtTime(ts) {
-  const d = new Date(ts);
-  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-}
-
-function roomRef(code) { return ref(db, 'rooms/' + code); }
-
-// ─── UI 헬퍼 ──────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
-}
-
-function showLoading(msg) {
-  document.getElementById('loading-msg').textContent = msg || '처리 중...';
-  document.getElementById('overlay-loading').classList.remove('hidden');
-}
-function hideLoading() {
-  document.getElementById('overlay-loading').classList.add('hidden');
-}
-
-function showOverlay(id) {
-  document.getElementById(id).classList.remove('hidden');
-}
-function closeOverlay(id) {
-  document.getElementById(id).classList.add('hidden');
-}
-
-function showErr(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  setTimeout(() => { el.textContent = ''; }, 3000);
-}
-
-// ─── LOBBY ───────────────────────────────────────────────────
-async function createRoom() {
-  const name = document.getElementById('input-name').value.trim();
-  if (!name) { showErr('name-error','이름을 입력해 주세요'); return; }
-
+async function createRoom(){
+  const name=document.getElementById('input-name').value.trim();
+  if(!name){showErr('name-error','이름을 입력해 주세요');return;}
   showLoading('방을 만드는 중...');
-  const code = genCode();
-  const deck = makeDeck();
-
-  const roomData = {
-    code,
-    status:      'waiting',
-    players:     { 0: { name, joined: Date.now() } },
-    playerOrder: [name],
-    hostName:    name,
-    deck,
-    drawn:       [],
-    kingsDrawn:  0,
-    currentTurn: 0,
-    gameOver:    false,
-    log:         [{ t: Date.now(), msg: `${name}님이 방을 만들었습니다` }],
-    rules:       DEFAULT_RULES,
-    lastUpdate:  Date.now(),
-  };
-
-  try {
-    await set(roomRef(code), roomData);
-    hideLoading();
-    G.myName   = name;
-    G.roomCode = code;
-    G.isHost   = true;
-    enterWaiting();
-  } catch(e) {
-    hideLoading();
-    showErr('name-error','저장 실패: ' + e.message);
-  }
+  const code=genCode(),deck=makeDeck();
+  const data={code,status:'waiting',players:{0:{name,joined:Date.now()}},playerOrder:[name],hostName:name,deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,rules:DR,log:[{t:Date.now(),msg:`${name}님이 방을 만들었습니다`}],lastUpdate:Date.now()};
+  try{await set(rRef(code),data);hideLoading();G.myName=name;G.roomCode=code;G.isHost=true;enterWaiting();}
+  catch(e){hideLoading();showErr('name-error','실패: '+e.message);}
 }
 
-async function joinRoom() {
-  const name = document.getElementById('input-name').value.trim();
-  const code = document.getElementById('input-room').value.trim().toUpperCase();
-  if (!name) { showErr('name-error','이름을 입력해 주세요'); return; }
-  if (code.length !== 2 || isNaN(code)) { showErr('join-error','방 코드 2자리 숫자를 입력해 주세요'); return; }
-
+async function joinRoom(){
+  const name=document.getElementById('input-name').value.trim();
+  const code=document.getElementById('input-room').value.trim();
+  if(!name){showErr('name-error','이름을 입력해 주세요');return;}
+  if(code.length!==2||isNaN(code)){showErr('join-error','2자리 숫자를 입력해 주세요');return;}
   showLoading('방을 찾는 중...');
-  try {
-    const snap = await get(roomRef(code));
-    if (!snap.exists()) { hideLoading(); showErr('join-error','방을 찾을 수 없습니다'); return; }
-    const room = snap.val();
-    if (room.status === 'playing') { hideLoading(); showErr('join-error','이미 게임이 시작된 방입니다'); return; }
-
-    const order = room.playerOrder || [];
-    if (!order.includes(name)) {
-      const newOrder = [...order, name];
-      const idx = newOrder.length - 1;
-      await update(roomRef(code), {
-        [`players/${idx}`]: { name, joined: Date.now() },
-        playerOrder: newOrder,
-        [`log/${Date.now()}`]: { t: Date.now(), msg: `${name}님이 입장했습니다` },
-        lastUpdate: Date.now(),
-      });
+  try{
+    const snap=await get(rRef(code));
+    if(!snap.exists()){hideLoading();showErr('join-error','방을 찾을 수 없습니다');return;}
+    const room=snap.val();
+    if(room.status==='playing'){hideLoading();showErr('join-error','이미 시작된 게임입니다');return;}
+    const order=room.playerOrder||[];
+    if(!order.includes(name)){
+      const no=[...order,name];
+      await update(rRef(code),{[`players/${no.length-1}`]:{name,joined:Date.now()},playerOrder:no,[`log/${Date.now()}`]:{t:Date.now(),msg:`${name}님이 입장했습니다`},lastUpdate:Date.now()});
     }
-
-    hideLoading();
-    G.myName   = name;
-    G.roomCode = code;
-    G.isHost   = false;
-    enterWaiting();
-  } catch(e) {
-    hideLoading();
-    showErr('join-error','오류: ' + e.message);
-  }
+    hideLoading();G.myName=name;G.roomCode=code;G.isHost=false;enterWaiting();
+  }catch(e){hideLoading();showErr('join-error','오류: '+e.message);}
 }
 
-// ─── WAITING ROOM ─────────────────────────────────────────────
-function enterWaiting() {
-  document.getElementById('display-room-code').textContent = G.roomCode;
-  showScreen('waiting');
-  startListening();
-}
+function enterWaiting(){document.getElementById('display-room-code').textContent=G.roomCode;showScreen('waiting');startListening();}
 
-function updateWaiting(room) {
-  const order = room.playerOrder || [];
-  const players = room.players || {};
-
-  document.getElementById('player-count-waiting').textContent = `(${order.length}명)`;
-
-  const listEl = document.getElementById('players-list-waiting');
-  listEl.innerHTML = order.map((pName, i) => {
-    const isHost = pName === room.hostName;
-    const isMe   = pName === G.myName;
-    return `<div class="player-chip online">
+function updateWaiting(room){
+  const order=room.playerOrder||[];
+  document.getElementById('player-count').textContent=`(${order.length}명)`;
+  document.getElementById('players-list').innerHTML=order.map(n=>`
+    <div class="player-chip online">
       <div class="player-dot"></div>
-      <span class="player-name-text">${pName}</span>
-      ${isHost ? '<span class="host-badge">방장</span>' : ''}
-      ${isMe   ? '<span class="me-badge" style="margin-left:auto">나</span>' : ''}
-    </div>`;
-  }).join('');
-
-  const amHost = room.hostName === G.myName;
-  document.getElementById('host-controls').style.display     = amHost ? 'block' : 'none';
-  document.getElementById('guest-waiting-msg').style.display = amHost ? 'none'  : 'block';
-
-  const btn = document.getElementById('btn-start');
-  if (order.length >= 1) {
-    btn.disabled    = false;
-    btn.textContent = order.length === 1
-      ? `✦ 혼자 시작하기`
-      : `✦ 게임 시작 (${order.length}명)`;
-  } else {
-    btn.disabled    = true;
-    btn.textContent = '게임 시작';
-  }
+      <span class="player-name">${n}</span>
+      ${n===room.hostName?'<span class="badge-host">방장</span>':''}
+      ${n===G.myName?'<span class="badge-me">나</span>':''}
+    </div>`).join('');
+  const amHost=room.hostName===G.myName;
+  document.getElementById('host-controls').style.display=amHost?'block':'none';
+  document.getElementById('guest-wait').style.display=amHost?'none':'block';
+  const btn=document.getElementById('btn-start');
+  btn.disabled=false;
+  btn.textContent=order.length===1?'⚔ 혼자 시작하기':`⚔ 게임 시작 (${order.length}명)`;
 }
 
-async function startGame() {
+async function startGame(){
   showLoading('게임 시작 중...');
-  try {
-    await update(roomRef(G.roomCode), {
-      status:     'playing',
-      lastUpdate: Date.now(),
-      [`log/${Date.now()}`]: { t: Date.now(), msg: '⚔️ 게임이 시작되었습니다!' },
-    });
-    hideLoading();
-  } catch(e) { hideLoading(); }
+  try{await update(rRef(G.roomCode),{status:'playing',lastUpdate:Date.now(),[`log/${Date.now()}`]:{t:Date.now(),msg:'⚔️ 게임이 시작되었습니다!'}});hideLoading();}
+  catch(e){hideLoading();}
 }
 
-// ─── REALTIME LISTENER ────────────────────────────────────────
-function startListening() {
-  if (G.unsubscribe) G.unsubscribe();
-
-  const r = roomRef(G.roomCode);
-  const handler = (snap) => {
-    if (!snap.exists()) return;
-    const room = snap.val();
-
-    const waiting = document.getElementById('screen-waiting').classList.contains('active');
-    const gaming  = document.getElementById('screen-game').classList.contains('active');
-
-    if (waiting) {
-      updateWaiting(room);
-      if (room.status === 'playing') {
-        showScreen('game');
-        G.gameOverShown = false;
-        updateGame(room);
-      }
-    } else if (gaming) {
-      updateGame(room);
-    }
+function startListening(){
+  if(G.unsub)G.unsub();
+  const r=rRef(G.roomCode);
+  const handler=snap=>{
+    if(!snap.exists())return;
+    const room=snap.val();
+    const waiting=document.getElementById('screen-waiting').classList.contains('active');
+    const gaming=document.getElementById('screen-game').classList.contains('active');
+    if(waiting){updateWaiting(room);if(room.status==='playing'){showScreen('game');G.gameOverShown=false;updateGame(room);}}
+    else if(gaming){updateGame(room);}
   };
-
-  onValue(r, handler);
-  G.unsubscribe = () => off(r, 'value', handler);
+  onValue(r,handler);
+  G.unsub=()=>off(r,'value',handler);
 }
 
-// ─── GAME UI ──────────────────────────────────────────────────
-function updateGame(room) {
-  const drawn  = room.drawn  || [];
-  const order  = room.playerOrder || [];
-  const deck   = room.deck   || [];
-  const remaining = deck.length - drawn.length;
+function updateGame(room){
+  const drawn=room.drawn||[],order=room.playerOrder||[],deck=room.deck||[],rules=room.rules||DR;
+  document.getElementById('cards-left').textContent=deck.length-drawn.length;
+  document.getElementById('room-code-top').textContent=G.roomCode;
+  document.getElementById('player-count-game').textContent=order.length+'명';
 
-  document.getElementById('cards-remaining').textContent = remaining;
-  document.getElementById('game-room-code').textContent  = G.roomCode;
+  const kc=room.kingsDrawn||0;
+  document.getElementById('kings-count-txt').textContent=`${kc} / 4`;
+  for(let i=0;i<4;i++){const sl=document.getElementById('king-'+i);sl.className='king-slot';if(i<kc){sl.classList.add(kc>=4?'danger':'filled');sl.textContent='♚';}else{sl.textContent='♔';}}
 
-  // Kings
-  const kc = room.kingsDrawn || 0;
-  document.getElementById('kings-count-text').textContent = `${kc} / 4`;
-  for (let i = 0; i < 4; i++) {
-    const slot = document.getElementById('king-'+i);
-    slot.className = 'king-slot';
-    if (i < kc) {
-      slot.classList.add(kc >= 4 ? 'danger' : 'filled');
-      slot.textContent = '♚';
-    } else {
-      slot.textContent = '♔';
-    }
-  }
+  const turn=(room.currentTurn||0)%Math.max(order.length,1);
+  const turnPlayer=order[turn];
+  const isSolo=order.length===1;
+  const isMyTurn=(turnPlayer===G.myName||isSolo)&&!room.gameOver;
+  document.getElementById('my-turn-banner').style.display=isMyTurn?'block':'none';
+  document.getElementById('others-banner').style.display=!isMyTurn?'block':'none';
+  if(!isMyTurn&&turnPlayer)document.getElementById('turn-name-txt').textContent=turnPlayer;
+  const btn=document.getElementById('btn-draw');
+  btn.disabled=!isMyTurn;
+  btn.textContent=isMyTurn?'✦ 카드 뽑기':'카드 뽑기';
 
-  // Turn
-  const turn      = (room.currentTurn || 0) % Math.max(order.length, 1);
-  const turnPlayer = order[turn];
-  const isSolo     = order.length === 1;
-  const isMyTurn   = (turnPlayer === G.myName || isSolo) && !room.gameOver;
+  if(drawn.length>0){
+    const last=drawn[drawn.length-1];
+    const cc=isRed(last.s)?'c-red':'c-black';
+    document.getElementById('card-display').innerHTML=`<div class="playing-card"><div class="c-rank ${cc}">${last.r}</div><div class="c-suit ${cc}">${last.s}</div></div>`;
+    document.getElementById('card-by').innerHTML=`<strong>${last.by}</strong>님이 뽑음`;
+    const rule=rules[last.r]||DR[last.r]||'';
+    document.getElementById('rule-col').innerHTML=`
+      <div class="rule-badge-rank">${last.r}</div>
+      <div class="rule-card-name">${RANK_NAMES[last.r]||last.r}</div>
+      <div class="rule-divider"></div>
+      <div class="rule-desc">${rule}</div>`;
+    renderGrid(rules,last.r);
+  } else {renderGrid(rules,'');}
 
-  document.getElementById('my-turn-banner').style.display     = isMyTurn  ? 'block' : 'none';
-  document.getElementById('others-turn-banner').style.display = !isMyTurn ? 'block' : 'none';
-  if (!isMyTurn && turnPlayer) {
-    document.getElementById('current-turn-name').textContent = turnPlayer;
-  }
-
-  const drawBtn = document.getElementById('btn-draw');
-  drawBtn.disabled = !isMyTurn;
-  drawBtn.textContent = isMyTurn ? '✦ 카드 뽑기' : '카드 뽑기';
-
-  // Last drawn card
-  if (drawn.length > 0) {
-    const last = drawn[drawn.length-1];
-    const color = cardColor(last.s);
-    document.getElementById('card-display').innerHTML = `
-      <div class="playing-card">
-        <div class="card-rank ${color}">${last.r}</div>
-        <div class="card-suit ${color}">${last.s}</div>
-      </div>`;
-    document.getElementById('card-who-info').innerHTML =
-      `<strong>${last.by}</strong>님이 뽑음`;
-
-    const rule = (room.rules || DEFAULT_RULES)[last.r];
-    if (rule) {
-      const rd = document.getElementById('rule-display');
-      rd.style.display = 'block';
-      document.getElementById('rule-rank').textContent = last.r;
-      document.getElementById('rule-text').textContent = rule;
-    }
-  }
-
-  // Log
-  const log   = room.log || {};
-  const logEl = document.getElementById('game-log');
-  const entries = Object.values(log)
-    .sort((a,b) => b.t - a.t)
-    .slice(0, 25);
-  logEl.innerHTML = entries.map(e => {
-    let cls = '';
-    if (e.msg.includes('👑') || e.msg.includes('왕')) cls = 'log-king';
-    if (e.msg.includes('💀') || e.msg.includes('성배를 마셨')) cls = 'log-gameover';
-    return `<div class="log-entry ${cls}"><span class="log-time">${fmtTime(e.t)}</span>${e.msg}</div>`;
+  const log=room.log||{};
+  const logEl=document.getElementById('game-log');
+  const entries=Object.values(log).sort((a,b)=>b.t-a.t).slice(0,25);
+  logEl.innerHTML=entries.map(e=>{
+    let cls='';
+    if(e.msg.includes('👑')||e.msg.includes('왕'))cls='log-gold';
+    if(e.msg.includes('💀')||e.msg.includes('성배를 마셨'))cls='log-red';
+    return `<div class="log-e ${cls}"><span class="log-t">${fmtTime(e.t)}</span>${e.msg}</div>`;
   }).join('');
 
-  // Game over
-  if (room.gameOver && !G.gameOverShown) {
-    G.gameOverShown = true;
-    const who = drawn.length > 0 ? drawn[drawn.length-1].by : '???';
-    document.getElementById('gameover-msg').innerHTML =
-      `<strong style="color:var(--crimson-light)">${who}</strong>님이 네 번째 왕을 뽑았습니다!<br>성배를 마신 자여, 왕국에 경의를.`;
-    setTimeout(() => showOverlay('overlay-gameover'), 400);
+  if(room.gameOver&&!G.gameOverShown){
+    G.gameOverShown=true;
+    const who=drawn.length>0?drawn[drawn.length-1].by:'???';
+    document.getElementById('gameover-msg').innerHTML=`<strong style="color:var(--red-lt)">${who}</strong>님이 네 번째 왕을 뽑았습니다!<br>성배를 마신 자여, 왕국에 경의를.`;
+    setTimeout(()=>showOverlay('ov-gameover'),400);
   }
 }
 
-// ─── DRAW CARD ────────────────────────────────────────────────
-async function drawCard() {
-  const btn = document.getElementById('btn-draw');
-  btn.disabled = true;
-
-  try {
-    const snap = await get(roomRef(G.roomCode));
-    if (!snap.exists()) return;
-    const room = snap.val();
-
-    const order = room.playerOrder || [];
-    const turn  = (room.currentTurn || 0) % Math.max(order.length, 1);
-    const isSolo = order.length === 1;
-    if (!isSolo && order[turn] !== G.myName) return;
-
-    const drawn = room.drawn || [];
-    const deck  = room.deck  || [];
-    if (drawn.length >= deck.length) return;
-
-    const card = deck[drawn.length];
-    const newDrawn = [...drawn, { r: card.r, s: card.s, by: G.myName, t: Date.now() }];
-
-    let kingsDrawn   = room.kingsDrawn || 0;
-    let gameOver     = false;
-    let kingOverlay  = false;
-    const isKing     = card.r === 'K';
-
-    if (isKing) {
-      kingsDrawn++;
-      if (kingsDrawn >= 4) {
-        gameOver = true;
-      } else {
-        kingOverlay = true;
-      }
+async function drawCard(){
+  document.getElementById('btn-draw').disabled=true;
+  try{
+    const snap=await get(rRef(G.roomCode));if(!snap.exists())return;
+    const room=snap.val();
+    const order=room.playerOrder||[];
+    const turn=(room.currentTurn||0)%Math.max(order.length,1);
+    const isSolo=order.length===1;
+    if(!isSolo&&order[turn]!==G.myName)return;
+    const drawn=room.drawn||[],deck=room.deck||[];
+    if(drawn.length>=deck.length)return;
+    const card=deck[drawn.length];
+    const newDrawn=[...drawn,{r:card.r,s:card.s,by:G.myName,t:Date.now()}];
+    let kingsDrawn=room.kingsDrawn||0,gameOver=false,kingOv=false;
+    if(card.r==='K'){kingsDrawn++;if(kingsDrawn>=4)gameOver=true;else kingOv=true;}
+    const nextTurn=(turn+1)%Math.max(order.length,1);
+    const logKey=`log/draw_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const logMsg=card.r==='K'?(gameOver?`💀 ${G.myName}이/가 네 번째 왕(${card.s})을 뽑아 성배를 마셨습니다!`:`👑 ${G.myName}이/가 왕(${card.s}) 뽑음 — 성배 ${kingsDrawn}/4`):`${G.myName}이/가 ${card.r}${card.s} 뽑음`;
+    await update(rRef(G.roomCode),{drawn:newDrawn,kingsDrawn,gameOver,currentTurn:nextTurn,lastUpdate:Date.now(),[logKey]:{t:Date.now(),msg:logMsg}});
+    if(kingOv){
+      document.getElementById('king-ov-icon').textContent=kingsDrawn===3?'⚠️':'👑';
+      document.getElementById('king-ov-title').textContent=kingsDrawn===3?'위험! 세 번째 왕!':`${kingsDrawn}번째 왕 등장!`;
+      document.getElementById('king-ov-msg').textContent=kingsDrawn===3?'다음 왕을 뽑는 사람이 성배를 마셔야 합니다!':`성배에 왕이 ${kingsDrawn}명 모였습니다. 4번째를 조심하세요!`;
+      showOverlay('ov-king');
     }
-
-    const nextTurn = (turn + 1) % order.length;
-    const logKey   = `log/draw_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const logMsg   = isKing
-      ? (gameOver
-          ? `💀 ${G.myName}이/가 네 번째 왕(${card.s})을 뽑아 성배를 마셨습니다!`
-          : `👑 ${G.myName}이/가 왕(${card.s}) 뽑음 — 성배 ${kingsDrawn}/4`)
-      : `${G.myName}이/가 ${card.r}${card.s} 뽑음`;
-
-    await update(roomRef(G.roomCode), {
-      drawn:       newDrawn,
-      kingsDrawn,
-      gameOver,
-      currentTurn: nextTurn,
-      lastUpdate:  Date.now(),
-      [logKey]: { t: Date.now(), msg: logMsg },
-    });
-
-    if (kingOverlay) {
-      const kc = kingsDrawn;
-      document.getElementById('king-overlay-icon').textContent = kc === 3 ? '⚠️' : '👑';
-      document.getElementById('king-overlay-title').textContent =
-        kc === 3 ? '위험! 세 번째 왕!' : `${kc}번째 왕 등장!`;
-      document.getElementById('king-overlay-msg').textContent =
-        kc === 3
-          ? '다음에 왕을 뽑는 사람이 성배를 통째로 마셔야 합니다!'
-          : `성배에 왕이 ${kc}명 모였습니다. 4번째 왕을 조심하세요!`;
-      showOverlay('overlay-king');
-    }
-
-  } catch(e) {
-    console.error(e);
-    btn.disabled = false;
-  }
+  }catch(e){console.error(e);document.getElementById('btn-draw').disabled=false;}
 }
 
-// ─── NEW GAME ─────────────────────────────────────────────────
-async function startNewGame() {
-  closeOverlay('overlay-gameover');
-  showLoading('새 게임 준비 중...');
-  try {
-    const deck = makeDeck();
-    await update(roomRef(G.roomCode), {
-      deck,
-      drawn:       [],
-      kingsDrawn:  0,
-      currentTurn: 0,
-      gameOver:    false,
-      lastUpdate:  Date.now(),
-      log: { [`start_${Date.now()}`]: { t: Date.now(), msg: '🎮 새 게임이 시작되었습니다!' } },
-    });
-    G.gameOverShown = false;
-    document.getElementById('card-display').innerHTML = '<div class="card-back">👑</div>';
-    document.getElementById('card-who-info').innerHTML = '';
-    document.getElementById('rule-display').style.display = 'none';
-    hideLoading();
-  } catch(e) { hideLoading(); }
+async function startNewGame(){
+  closeOverlay('ov-gameover');showLoading('새 게임 준비 중...');
+  try{
+    const deck=makeDeck();
+    await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
+    G.gameOverShown=false;
+    document.getElementById('card-display').innerHTML='<div class="card-back">👑</div>';
+    document.getElementById('card-by').innerHTML='';
+    document.getElementById('rule-col').innerHTML='<div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>';
+    renderGrid(DR,'');hideLoading();
+  }catch(e){hideLoading();}
+}
+function confirmNewGame(){if(confirm('새 게임을 시작하시겠습니까?'))startNewGame();}
+
+function viewRules(){
+  (async()=>{
+    let rules=DR;
+    if(G.roomCode){try{const s=await get(rRef(G.roomCode));if(s.exists()&&s.val().rules)rules=s.val().rules;}catch(e){}}
+    const ed=G.isHost;
+    document.getElementById('rules-ov-content').innerHTML=Object.entries(rules).map(([rank,desc])=>`
+      <div class="rule-ov-item">
+        <span class="rule-ov-rank">${rank}</span>
+        ${ed?`<input type="text" class="rule-input" data-rank="${rank}" value="${desc}"
+          style="flex:1;font-size:.83rem;padding:4px 8px;background:var(--bg-surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;"/>`
+          :`<span class="rule-ov-desc">${desc}</span>`}
+      </div>`).join('');
+    document.getElementById('rules-save-area').style.display=ed?'block':'none';
+    document.getElementById('rules-edit-hint').style.display=ed?'block':'none';
+  })();
+  showOverlay('ov-rules');
 }
 
-function confirmNewGame() {
-  if (confirm('새 게임을 시작하시겠습니까?')) startNewGame();
+async function saveRules(){
+  const nr={};document.querySelectorAll('.rule-input').forEach(i=>nr[i.dataset.rank]=i.value.trim()||DR[i.dataset.rank]);
+  showLoading('저장 중...');
+  try{await update(rRef(G.roomCode),{rules:nr,lastUpdate:Date.now()});hideLoading();closeOverlay('ov-rules');}
+  catch(e){hideLoading();alert('저장 실패: '+e.message);}
 }
 
-// ─── MISC ─────────────────────────────────────────────────────
-function viewRules() {
-  // 현재 방 규칙 또는 기본 규칙 사용
-  const snap_get = async () => {
-    let rules = DEFAULT_RULES;
-    if (G.roomCode) {
-      try {
-        const snap = await get(roomRef(G.roomCode));
-        if (snap.exists() && snap.val().rules) rules = snap.val().rules;
-      } catch(e) {}
-    }
-    const isHost = G.isHost;
-    document.getElementById('rules-content').innerHTML =
-      Object.entries(rules).map(([rank, desc]) => `
-        <div class="rule-item" style="align-items:center;">
-          <span class="rule-item-rank">${rank}</span>
-          ${isHost
-            ? `<input type="text" class="rule-input" data-rank="${rank}" value="${desc}"
-                style="flex:1; font-size:0.85rem; padding:4px 8px; background:var(--bg-surface);
-                border:1px solid var(--border); border-radius:6px; color:var(--text-primary);
-                font-family:'Noto Sans KR',sans-serif;" />`
-            : `<span class="rule-item-desc">${desc}</span>`
-          }
-        </div>`
-      ).join('');
-    if (isHost) {
-      document.getElementById('rules-save-btn').style.display = 'block';
-    } else {
-      document.getElementById('rules-save-btn').style.display = 'none';
-    }
-  };
-  snap_get();
-  showOverlay('overlay-rules');
-}
+function resetRules(){document.querySelectorAll('.rule-input').forEach(i=>i.value=DR[i.dataset.rank]||'');}
 
-async function saveRules() {
-  const inputs = document.querySelectorAll('.rule-input');
-  const newRules = {};
-  inputs.forEach(inp => {
-    newRules[inp.dataset.rank] = inp.value.trim() || DEFAULT_RULES[inp.dataset.rank];
-  });
-  showLoading('규칙 저장 중...');
-  try {
-    await update(roomRef(G.roomCode), { rules: newRules, lastUpdate: Date.now() });
-    hideLoading();
-    closeOverlay('overlay-rules');
-  } catch(e) { hideLoading(); alert('저장 실패: ' + e.message); }
-}
+function copyRoomCode(){const c=G.roomCode;navigator.clipboard?.writeText(c).then(()=>alert(`방 코드 "${c}" 복사!`)).catch(()=>alert('방 코드: '+c));}
 
-function resetRules() {
-  document.querySelectorAll('.rule-input').forEach(inp => {
-    inp.value = DEFAULT_RULES[inp.dataset.rank] || '';
-  });
-}
-
-function copyRoomCode() {
-  const code = G.roomCode;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(code)
-      .then(() => alert(`방 코드 "${code}" 복사 완료!`))
-      .catch(() => alert(`방 코드: ${code}`));
-  } else {
-    alert(`방 코드: ${code}`);
-  }
-}
-
-function leaveGame() {
-  if (!confirm('방을 나가시겠습니까?')) return;
-  if (G.unsubscribe) G.unsubscribe();
-  G.roomCode = '';
-  G.myName   = '';
-  G.isHost   = false;
-  G.gameOverShown = false;
+function leaveGame(){
+  if(!confirm('방을 나가시겠습니까?'))return;
+  if(G.unsub)G.unsub();
+  Object.assign(G,{myName:'',roomCode:'',isHost:false,gameOverShown:false});
   showScreen('lobby');
 }
 
-// input — 숫자만 허용
-document.getElementById('input-room').addEventListener('input', function() {
-  this.value = this.value.replace(/\D/g, '').slice(0, 2);
-});
+document.getElementById('input-room').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,2);});
+if(firebaseConfig.apiKey!=='YOUR_API_KEY')document.getElementById('firebase-notice').style.display='none';
 
-// Firebase 설정 자동 감지
-const configured = firebaseConfig.apiKey !== 'YOUR_API_KEY';
-const notice = document.getElementById('firebase-notice');
-if (configured) notice.style.display = 'none';
-
-// ─── type="module" 내부 함수를 HTML onclick에서 접근 가능하도록 전역 등록 ───
-window.createRoom      = createRoom;
-window.joinRoom        = joinRoom;
-window.startGame       = startGame;
-window.drawCard        = drawCard;
-window.startNewGame    = startNewGame;
-window.confirmNewGame  = confirmNewGame;
-window.viewRules       = viewRules;
-window.saveRules       = saveRules;
-window.resetRules      = resetRules;
-window.copyRoomCode    = copyRoomCode;
-window.leaveGame       = leaveGame;
-window.closeOverlay    = closeOverlay;
+Object.assign(window,{createRoom,joinRoom,startGame,drawCard,startNewGame,confirmNewGame,viewRules,saveRules,resetRules,copyRoomCode,leaveGame,closeOverlay});
 </script>
 </body>
 </html>
