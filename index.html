@@ -471,7 +471,7 @@ input[type="text"]::placeholder{color:var(--text-3);}
     <div class="crown-wrap"><span class="crown-icon">👑</span></div>
     <div class="game-title">왕의 성배</div>
     <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
-    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.8.0 &nbsp;·&nbsp; 2025.05</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v2.9.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
   <div class="config-notice" id="firebase-notice">
     🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
@@ -658,7 +658,7 @@ const DR={
   'K':'👑 왕 — 성배에 한 잔 추가! 네 번째 왕을 뽑으면 성배를 마셔야 함'
 };
 
-const G={myName:'',roomCode:'',isHost:false,unsub:null,gameOverShown:false,isAnimating:false};
+const G={myName:'',roomCode:'',isHost:false,unsub:null,gameOverShown:false,isAnimating:false,pendingKings:-1};
 
 /* ─── WEB AUDIO 효과음 ───────────────────────────────────── */
 let _audioCtx = null;
@@ -842,7 +842,14 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 function showLoading(m){document.getElementById('loading-msg').textContent=m||'처리 중...';document.getElementById('ov-loading').classList.remove('hidden');}
 function hideLoading(){document.getElementById('ov-loading').classList.add('hidden');}
 function showOverlay(id){document.getElementById(id).classList.remove('hidden');}
-function closeOverlay(id){document.getElementById(id).classList.add('hidden');}
+function closeOverlay(id){
+  document.getElementById(id).classList.add('hidden');
+  // 왕 알림 닫을 때 보류 중인 kings tracker 업데이트 적용
+  if((id==='ov-king'||id==='ov-gameover') && G.pendingKings>=0){
+    updateKings(G.pendingKings);
+    G.pendingKings=-1;
+  }
+}
 function showErr(id,m){const el=document.getElementById(id);el.textContent=m;setTimeout(()=>el.textContent='',3000);}
 
 function renderGrid(){} // 사용 안 함
@@ -918,6 +925,16 @@ function startListening(){
   G.unsub=()=>off(r,'value',handler);
 }
 
+function updateKings(kc){
+  document.getElementById('kings-count-txt').textContent=`${kc} / 4`;
+  for(let i=0;i<4;i++){
+    const sl=document.getElementById('king-'+i);
+    sl.className='king-slot';
+    if(i<kc){ sl.classList.add(kc>=4?'danger':'filled'); sl.textContent='♚'; }
+    else { sl.textContent='♔'; }
+  }
+}
+
 function updateGame(room){
   const drawn=room.drawn||[],order=room.playerOrder||[],deck=room.deck||[],rules=room.rules||DR;
   document.getElementById('cards-left').textContent=deck.length-drawn.length;
@@ -925,8 +942,16 @@ function updateGame(room){
   document.getElementById('player-count-game').textContent=order.length+'명';
 
   const kc=room.kingsDrawn||0;
-  document.getElementById('kings-count-txt').textContent=`${kc} / 4`;
-  for(let i=0;i<4;i++){const sl=document.getElementById('king-'+i);sl.className='king-slot';if(i<kc){sl.classList.add(kc>=4?'danger':'filled');sl.textContent='♚';}else{sl.textContent='♔';}}
+  const lastCard=drawn.length>0?drawn[drawn.length-1]:null;
+  const isKingCard=lastCard&&lastCard.r==='K';
+
+  // K 카드일 때는 알림 닫을 때까지 kings tracker 업데이트 보류
+  if(isKingCard && kc > 0){
+    G.pendingKings = kc; // 닫기 버튼 누를 때 적용
+  } else {
+    G.pendingKings = -1;
+    updateKings(kc);
+  }
 
   const turn=(room.currentTurn||0)%Math.max(order.length,1);
   const turnPlayer=order[turn];
