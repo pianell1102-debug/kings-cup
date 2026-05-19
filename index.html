@@ -471,7 +471,7 @@ input[type="text"]::placeholder{color:var(--text-3);}
     <div class="crown-wrap"><span class="crown-icon">👑</span></div>
     <div class="game-title">왕의 성배</div>
     <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
-    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v3.2.0 &nbsp;·&nbsp; 2025.05</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v3.3.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
   <div class="config-notice" id="firebase-notice">
     🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
@@ -864,14 +864,12 @@ async function createRoom(){
   showLoading('방을 만드는 중...');
   const code=genCode();
 
-  // 1단계: 덱 제외한 기본 정보만 먼저 저장 (빠름)
+  // 1단계: 최소 데이터만 먼저 저장 (rules/deck/log 제외 → 매우 빠름)
   const baseData={
     code, status:'waiting',
     players:{0:{name,joined:Date.now()}}, playerOrder:[name],
     hostName:name, deck:[], drawn:[], kingsDrawn:0, currentTurn:0,
-    gameOver:false, rules:DR, deckReady:false,
-    log:[{t:Date.now(),msg:`${name}님이 방을 만들었습니다`}],
-    lastUpdate:Date.now()
+    gameOver:false, deckReady:false, lastUpdate:Date.now()
   };
   try{
     await set(rRef(code), baseData);
@@ -879,10 +877,14 @@ async function createRoom(){
     G.myName=name; G.roomCode=code; G.isHost=true;
     enterWaiting();
 
-    // 2단계: 대기실 화면 뜬 후 백그라운드에서 덱 저장
+    // 2단계: 대기실 뜬 후 백그라운드에서 덱 + rules + log 저장
     const deck=makeDeck();
-    update(rRef(code),{deck, deckReady:true, lastUpdate:Date.now()})
-      .catch(e=>console.error('덱 저장 오류:',e));
+    update(rRef(code),{
+      deck, deckReady:true,
+      rules:DR,
+      log:{[`init_${Date.now()}`]:{t:Date.now(),msg:`${name}님이 방을 만들었습니다`}},
+      lastUpdate:Date.now()
+    }).catch(e=>console.error('백그라운드 저장 오류:',e));
 
   }catch(e){hideLoading();showErr('name-error','실패: '+e.message);}
 }
