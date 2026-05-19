@@ -471,7 +471,7 @@ input[type="text"]::placeholder{color:var(--text-3);}
     <div class="crown-wrap"><span class="crown-icon">👑</span></div>
     <div class="game-title">왕의 성배</div>
     <div class="game-subtitle">✦ &nbsp; Real-time Multiplayer &nbsp; ✦</div>
-    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v3.0.0 &nbsp;·&nbsp; 2025.05</div>
+    <div style="margin-top:10px; font-size:0.62rem; color:var(--text-3); letter-spacing:0.12em; font-family:'Cinzel',serif;">v3.2.0 &nbsp;·&nbsp; 2025.05</div>
   </div>
   <div class="config-notice" id="firebase-notice">
     🔥 <strong style="color:var(--gold)">Firebase 설정 필요</strong> — 스크립트의 <code>firebaseConfig</code>를 교체하세요.<br>
@@ -643,18 +643,18 @@ const SUITS=['♠','♥','♦','♣'], RANKS=['A','2','3','4','5','6','7','8','9
 const RANK_NAMES={'A':'에이스','2':'투','3':'쓰리','4':'포','5':'파이브','6':'식스','7':'세븐','8':'에이트','9':'나인','10':'텐','J':'잭','Q':'퀸','K':'킹'};
 const SHORT={'A':'폭포수','2':'나','3':'너','4':'바닥','5':'남자들','6':'여자들','7':'천국','8':'짝','9':'운율','10':'카테고리','J':'규칙','Q':'질문','K':'👑왕'};
 const DR={
-  'A':'폭포수 — 카드를 뽑은 사람이 마시기 시작! 옆 사람으로 순서대로 이어지며, 앞 사람이 멈춰야 나도 멈출 수 있다',
-  '2':'나 — 내가 원하는 사람 한 명을 지목해서 마시게 한다. 지목당한 사람은 거부 불가!',
-  '3':'너 — 다른 사람이 나를 지목해서 마시게 한다. 누가 지목할지는 본인 선택',
-  '4':'바닥 — 카드를 뽑자마자 모두 손을 바닥에 올려야 한다! 가장 늦게 손을 올린 사람이 마심',
-  '5':'남자들 — 테이블에 앉은 남성 플레이어 전원이 마신다. 남자가 없으면 뽑은 사람이 마심',
-  '6':'여자들 — 테이블에 앉은 여성 플레이어 전원이 마신다. 여자가 없으면 뽑은 사람이 마심',
-  '7':'천국 — 카드를 뽑자마자 모두 손을 하늘로 들어야 한다! 가장 늦게 손을 든 사람이 마심',
-  '8':'짝 — 카드를 뽑은 사람이 짝을 한 명 정한다. 이후 둘 중 한 명이 마실 때마다 짝도 함께 마셔야 한다. 새 8이 나오면 짝 해제',
+  'A':'폭포수 — 카드를 뽑은 사람부터 마시기 시작! 파도타기~',
+  '2':'나 — 카드를 뽑은 사람이 한 명을 지목하고, 지목당한 사람은 마신다.',
+  '3':'너 — 카드를 뽑은 사람이 마신다.',
+  '4':'바닥 — 카드를 뽑자마자 손을 테이블에 올려야 한다! 가장 늦게 손을 올린 사람이 마신다.',
+  '5':'남자들 — 테이블에 앉은 남성 플레이어 전원이 마신다. 남자가 없으면 뽑은 사람이 마신다.',
+  '6':'여자들 — 테이블에 앉은 여성 플레이어 전원이 마신다. 여자가 없으면 뽑은 사람이 마신다.',
+  '7':'천국 — 카드를 뽑자마자 모두 손을 하늘로 들어야 한다! 가장 늦게 손을 든 사람이 마신다.',
+  '8':'짝 — 카드를 뽑은 사람이 짝을 한 명 정한다. 이후 둘 중 한 명이 마실 때마다 짝도 함께 마셔야 한다. 새 8 카드가 나올 때까지 유지한다.',
   '9':'만두 — 만두! 만두만두만두!',
   '10':'랜덤 — 랜덤게임~! 랜덤게임~!',
-  'J':'규칙 — 뽑은 사람이 새로운 규칙을 하나 만든다. (예: 왼손으로만 마시기, 존댓말 금지 등) 게임이 끝날 때까지 모두 지켜야 하며 어기면 마심',
-  'Q':'질문 — 뽑은 사람이 옆 사람에게 질문을 한다. 질문을 받은 사람은 반드시 질문으로만 대답해야 한다. 답변을 못 하거나 질문이 아닌 말을 하면 마심',
+  'J':'규칙 — 뽑은 사람이 새로운 규칙을 하나 만든다. (예: 왼손으로만 마시기, 존댓말 금지 등) 규칙을 어기면 마신다. 새로운 J 카드가 나올 때까지 유지한다.',
+  'Q':'질문 — 뽑은 사람이 질문했을 때 대답한 사람은 마신다. 다음 Q 카드가 나올 때까지 유지한다.',
   'K':'👑 왕 — 성배에 한 잔을 따른다! 첫 번째~세 번째 왕을 뽑은 사람은 원하는 만큼 따를 수 있다. 네 번째 왕을 뽑은 사람은 성배를 통째로 마셔야 한다!'
 };
 
@@ -833,7 +833,11 @@ function playSound(rank){
 }
 const genCode=()=>String(Math.floor(Math.random()*90)+10);
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
-const makeDeck=()=>{let d=[];for(const s of SUITS)for(const r of RANKS)d.push({r,s});return shuffle(d);};
+
+// ── 덱 압축: {r,s} 대신 0~51 숫자 인덱스 배열로 저장 (데이터 70% 감소) ──
+const makeDeck=()=>shuffle([...Array(52).keys()]);
+const decodeCard=i=>({r:RANKS[i%13], s:SUITS[Math.floor(i/13)]});
+
 const isRed=s=>s==='♥'||s==='♦';
 const fmtTime=ts=>{const d=new Date(ts);return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');};
 const rRef=c=>ref(db,'rooms/'+c);
@@ -858,10 +862,29 @@ async function createRoom(){
   const name=document.getElementById('input-name').value.trim();
   if(!name){showErr('name-error','이름을 입력해 주세요');return;}
   showLoading('방을 만드는 중...');
-  const code=genCode(),deck=makeDeck();
-  const data={code,status:'waiting',players:{0:{name,joined:Date.now()}},playerOrder:[name],hostName:name,deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,rules:DR,log:[{t:Date.now(),msg:`${name}님이 방을 만들었습니다`}],lastUpdate:Date.now()};
-  try{await set(rRef(code),data);hideLoading();G.myName=name;G.roomCode=code;G.isHost=true;enterWaiting();}
-  catch(e){hideLoading();showErr('name-error','실패: '+e.message);}
+  const code=genCode();
+
+  // 1단계: 덱 제외한 기본 정보만 먼저 저장 (빠름)
+  const baseData={
+    code, status:'waiting',
+    players:{0:{name,joined:Date.now()}}, playerOrder:[name],
+    hostName:name, deck:[], drawn:[], kingsDrawn:0, currentTurn:0,
+    gameOver:false, rules:DR, deckReady:false,
+    log:[{t:Date.now(),msg:`${name}님이 방을 만들었습니다`}],
+    lastUpdate:Date.now()
+  };
+  try{
+    await set(rRef(code), baseData);
+    hideLoading();
+    G.myName=name; G.roomCode=code; G.isHost=true;
+    enterWaiting();
+
+    // 2단계: 대기실 화면 뜬 후 백그라운드에서 덱 저장
+    const deck=makeDeck();
+    update(rRef(code),{deck, deckReady:true, lastUpdate:Date.now()})
+      .catch(e=>console.error('덱 저장 오류:',e));
+
+  }catch(e){hideLoading();showErr('name-error','실패: '+e.message);}
 }
 
 async function joinRoom(){
@@ -900,14 +923,27 @@ function updateWaiting(room){
   document.getElementById('host-controls').style.display=amHost?'block':'none';
   document.getElementById('guest-wait').style.display=amHost?'none':'block';
   const btn=document.getElementById('btn-start');
-  btn.disabled=false;
-  btn.textContent=order.length===1?'⚔ 혼자 시작하기':`⚔ 게임 시작 (${order.length}명)`;
+  const deckReady=room.deckReady!==false; // 기존 방 호환
+  if(!deckReady){
+    btn.disabled=true;
+    btn.textContent='⏳ 준비 중...';
+  } else {
+    btn.disabled=false;
+    btn.textContent=order.length===1?'⚔ 혼자 시작하기':`⚔ 게임 시작 (${order.length}명)`;
+  }
 }
 
 async function startGame(){
   showLoading('게임 시작 중...');
-  try{await update(rRef(G.roomCode),{status:'playing',lastUpdate:Date.now(),[`log/${Date.now()}`]:{t:Date.now(),msg:'⚔️ 게임이 시작되었습니다!'}});hideLoading();}
-  catch(e){hideLoading();}
+  try{
+    // 덱이 아직 안 들어왔으면 잠깐 기다림
+    const snap=await get(rRef(G.roomCode));
+    if(snap.exists()&&!snap.val().deckReady){
+      await new Promise(r=>setTimeout(r,800));
+    }
+    await update(rRef(G.roomCode),{status:'playing',lastUpdate:Date.now(),[`log/${Date.now()}`]:{t:Date.now(),msg:'⚔️ 게임이 시작되었습니다!'}});
+    hideLoading();
+  }catch(e){hideLoading();}
 }
 
 function startListening(){
@@ -937,7 +973,9 @@ function updateKings(kc){
 
 function updateGame(room){
   const drawn=room.drawn||[],order=room.playerOrder||[],deck=room.deck||[],rules=room.rules||DR;
-  document.getElementById('cards-left').textContent=deck.length-drawn.length;
+  // 압축 덱(숫자 배열)이면 deckReady 확인해서 52장 표시
+  const deckSize = deck.length || 52;
+  document.getElementById('cards-left').textContent=deckSize-drawn.length;
   document.getElementById('room-code-top').textContent=G.roomCode;
   document.getElementById('player-count-game').textContent=order.length+'명';
 
@@ -1049,7 +1087,9 @@ async function drawCard(){
     const drawn = room.drawn||[], deck = room.deck||[];
     if(drawn.length >= deck.length){ G.isAnimating=false; btn.disabled=false; return; }
 
-    const card = deck[drawn.length];
+    // 압축 덱 디코딩 (숫자 인덱스 → {r,s})
+    const rawCard = deck[drawn.length];
+    const card = (typeof rawCard === 'number') ? decodeCard(rawCard) : rawCard;
 
     // 카드 뒷면 리셋
     resetCard();
@@ -1143,11 +1183,12 @@ async function drawCard(){
 async function startNewGame(){
   closeOverlay('ov-gameover');showLoading('새 게임 준비 중...');
   try{
-    // 현재 저장된 규칙 유지 — 덱/카드/왕만 리셋
     const snap=await get(rRef(G.roomCode));
     const currentRules=(snap.exists()&&snap.val().rules)?snap.val().rules:DR;
-    const deck=makeDeck();
-    await update(rRef(G.roomCode),{deck,drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
+
+    // 기본 정보 먼저 리셋 (빠름)
+    await update(rRef(G.roomCode),{drawn:[],kingsDrawn:0,currentTurn:0,gameOver:false,deckReady:false,lastUpdate:Date.now(),rules:currentRules,log:{[`start_${Date.now()}`]:{t:Date.now(),msg:'🎮 새 게임이 시작되었습니다!'}}});
+
     G.gameOverShown=false;
     document.getElementById('card-back-face').className='card-back-face';
     document.getElementById('card-face').className='card-face';
@@ -1155,7 +1196,14 @@ async function startNewGame(){
     document.getElementById('card-suit-txt').textContent='';
     document.getElementById('card-by').innerHTML='';
     document.getElementById('rule-col').innerHTML='<div class="rule-no-card">카드를 뽑으면<br>규칙이 여기에<br>표시됩니다</div>';
-    renderGrid(DR,'');hideLoading();
+    renderGrid(DR,'');
+    hideLoading();
+
+    // 덱은 백그라운드에서 저장
+    const deck=makeDeck();
+    update(rRef(G.roomCode),{deck,deckReady:true,lastUpdate:Date.now()})
+      .catch(e=>console.error('덱 저장 오류:',e));
+
   }catch(e){hideLoading();}
 }
 function confirmNewGame(){if(confirm('새 게임을 시작하시겠습니까?'))startNewGame();}
